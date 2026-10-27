@@ -1859,7 +1859,15 @@ render();
   };
   downloads={save:async({filename,data})=>{const blob=data instanceof Blob?data:new Blob([data]);const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}};
   sample=null;user=null;myId=null;
-  $("tg-send").disabled=true;$("tg-send").title="Bu versiyada AI yordamchi yo'q";$("send").disabled=true;$("send").title="Bu versiyada AI yordamchi yo'q";for(const id of ["s-ai","r-ai","f-ai"]){const el=$(id);if(el)el.hidden=true}
+  // AI yordamchi: xabar `sorovlar`ga yoziladi, Claude har soat o'qib javob beradi va saqlaydi (Claude tugmasida ko'rinadi)
+  const viaClaude=async(inputId,sabab,msgEl)=>{const t=$(inputId).value.trim();if(!t)return;const ok=await autoSorov(t,sabab);
+    if(ok){$(inputId).value="";cjOpen(true);if(msgEl)msgEl.textContent="Claude'ga yuborildi. Javobi bir soat ichida Claude oynasida chiqadi."}else showErr("Yuborib bo'lmadi, qayta urinib ko'ring.")};
+  $("send").onclick=()=>viaClaude("msg","Yordamchi (sayt)");
+  $("tg-send").onclick=()=>viaClaude("tg-msg","Telegram'dan kiritish (sayt)");
+  $("send").title="Claude bir soat ichida javob beradi";$("tg-send").title="Claude bir soat ichida ajratib saqlaydi";
+  const hint=document.querySelector(".assistant:not(.tgbox) .ahead small");if(hint)hint.textContent="Yozganingiz Claude'ga boradi, u bir soat ichida javob beradi yoki daftarga saqlaydi. Javob Claude tugmasida ko'rinadi.";
+  for(const id of ["s-ai","r-ai","f-ai"]){const el=$(id);if(el)el.hidden=true}
+  const cjs=document.querySelector(".cj-head small");if(cjs)cjs.textContent="Har soat tekshirib javob beradi";
   db.collection("arxiv").limit(1000).onSnapshot(snap=>{arcDocs=snap.docs.map(x=>({id:x.id,...x.data()}));arcRecs=[];for(const d of arcDocs)for(const y of (Array.isArray(d.yozuvlar)?d.yozuvlar:[]))if(y&&y.id)arcRecs.push({...y,_arxiv:d.id});arcLoaded=true;mergeRecords()},()=>{arcLoaded=true;mergeRecords()});
   db.collection("yozuvlar").orderBy("sana","desc").limit(1000).onSnapshot(snap=>{liveRecs=snap.docs.map(x=>({id:x.id,...x.data()}));liveLoaded=true;mergeRecords()},()=>showErr("Daftar bilan aloqa uzildi. Sahifani qayta yuklang."));
   db.collection("xodimlar").limit(500).onSnapshot(snap=>{xodimlar=snap.docs.map(x=>({id:x.id,...x.data()})).filter(x=>x.login);xodimLoaded=true;applyAuth()},()=>{xodimLoaded=true;applyAuth()});
