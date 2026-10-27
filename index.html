@@ -335,6 +335,39 @@ tr.cur td{background:var(--lapis-soft)}
   td,th{padding:8px 6px}
   .bar{grid-template-columns:minmax(80px,120px) 1fr auto}
 }
+
+/* ---------- yordamchi javobi: xulosa, raqamlar, jadval, ogohlantirish */
+.ans{display:grid;gap:12px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.ans-who{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--turq);text-transform:uppercase;letter-spacing:.05em}
+.ans-x{margin:0;font-size:17px;font-weight:700;line-height:1.35;text-wrap:balance}
+.ans-p{margin:0;white-space:pre-wrap;line-height:1.5}
+.ans-h{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.ans-ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.ans-warn{display:flex;gap:8px;align-items:flex-start;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:9px 12px;font-weight:500;font-size:14px;line-height:1.4}
+.ans-warn .ic{margin-top:2px}
+.ans-warn.bad{background:var(--danger-soft);color:var(--danger)}
+.ans-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.ans-tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:2px;min-width:0}
+.ans-tile span{font-size:12.5px;color:var(--muted);font-weight:500}
+.ans-tile b{font-size:19px;font-weight:700;line-height:1.2;overflow-wrap:break-word}
+.ans-tile small{font-size:12px;color:var(--muted)}
+.ans-table{display:grid;gap:6px;min-width:0}
+.ans-cap{font-size:13px;font-weight:700;color:var(--ink)}
+.ans-cap small{font-weight:500;color:var(--muted);margin-left:6px}
+.ans-table table{background:var(--surface);border:1px solid var(--line);border-radius:10px;border-collapse:separate;border-spacing:0;overflow:hidden;font-size:14px}
+.ans-table th{background:var(--surface2);padding:8px 12px}
+.ans-table td{padding:8px 12px}
+.ans-table td.ans-name{font-weight:500}
+.ans-table td.num{font-weight:600}
+.ans-table tr.total td{background:var(--lapis-soft);font-weight:700;border-top:1px solid var(--line2)}
+.ans-foot{display:flex;justify-content:flex-end;gap:8px;align-items:center;margin-top:-4px}
+.ans-foot .link{padding:2px 6px}
+.cji .a{white-space:normal}.cji .ans{background:var(--surface);padding:10px 12px;gap:8px}.cji .ans-x{font-size:15px}
+.aibox .ans{background:transparent;border:0;padding:0}
+th{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
+.tabs button[aria-selected="true"]{box-shadow:inset 3px 0 0 var(--turq)}
+.kpi b,.chip b{letter-spacing:-.01em}
+@media (max-width:900px){.ans{padding:12px}.ans-x{font-size:16px}.ans-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.tabs button[aria-selected="true"]{box-shadow:inset 0 3px 0 var(--turq)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><!-- Lucide icons, ISC license, lucide.dev --><symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></symbol><symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-box" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/></symbol><symbol id="i-truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol><symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol><symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></symbol><symbol id="i-trend" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></symbol><symbol id="i-note" viewBox="0 0 24 24"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-spark" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></symbol><symbol id="i-xls" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></symbol><symbol id="i-tg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M13 8H7"/><path d="M17 12H7"/></symbol><symbol id="i-report" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></symbol><symbol id="i-warn" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol><symbol id="i-alarm" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M6.38 18.7 4 21"/><path d="M17.64 18.67 20 21"/></symbol><symbol id="i-cash" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol><symbol id="i-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></symbol><symbol id="i-debt" viewBox="0 0 24 24"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 16 6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol><symbol id="i-pen" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></symbol><symbol id="i-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol><symbol id="i-stop" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol><symbol id="i-idcard" viewBox="0 0 24 24"><path d="M16 2v2"/><path d="M7 22v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><path d="M8 2v2"/><circle cx="12" cy="11" r="3"/><rect x="3" y="4" width="18" height="18" rx="2"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol><symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></symbol><symbol id="i-rate" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></symbol><symbol id="i-archive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol><symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol><symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></symbol></svg>
@@ -381,7 +414,7 @@ tr.cur td{background:var(--lapis-soft)}
   <div class="alerts" id="alerts"></div>
   <button class="cj-fab" id="cj-fab" type="button" aria-label="Claude yordamchi" aria-expanded="false" aria-controls="cj-panel"><svg class="ic" aria-hidden="true"><use href="#i-headset"/></svg><span class="cj-badge" id="cj-badge" hidden></span></button>
   <section class="cj-panel" id="cj-panel" hidden aria-label="Claude yordamchi">
-    <div class="cj-head"><div><h2>Claude</h2><small>Daftar tushunmaganini Claude har soatda tekshirib javob beradi</small></div><button class="ghost" id="cj-close" type="button" aria-label="Yopish"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+    <div class="cj-head"><div><h2>Claude bilan yozishma</h2><small>Daftar bilmagan narsani Claude'ga yozasiz, u har soatda tekshirib javob beradi</small></div><button class="ghost" id="cj-close" type="button" aria-label="Yopish"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button></div>
     <div class="cj-new"><textarea id="cj-new" placeholder="Claude'ga yozing: savol, tuzatish, yangi narx…" aria-label="Claude'ga yangi xabar"></textarea><div class="row"><button class="primary" id="cj-send" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Yuborish</button><span class="muted" id="cj-msg"></span></div></div>
     <div id="cj-list" class="cjl"></div>
   </section>
@@ -1056,6 +1089,85 @@ $("x-save").onclick=async()=>{
   catch(e){formMsg("x-msg","Saqlab bo'lmadi. Qayta urinib ko'ring.")}finally{$("x-save").disabled=false}
 };
 
+
+/* ================= YORDAMCHI JAVOBINI KO'RSATISH ================= */
+const NUMRE=/^[−-]?\$?\s?[\d\s.,]+\s?(ta|dona|\$|so'm|som|%|kg|m)?\.?$/i;
+function isNumCell(s){s=String(s??"").trim();return !!s&&NUMRE.test(s)}
+function cellNum(s){const t=String(s??"").replace(/\s/g,"").replace(/[^\d.,−-]/g,"").replace(/,/g,".").replace("−","-");const v=parseFloat(t);return isNaN(v)?null:v}
+function commonPrefix(names){if(names.length<3)return"";const ws=names.map(n=>String(n).trim().split(/\s+/));let k=0;
+  while(ws.every(w=>w.length>k+1)&&ws.every(w=>w[k].toLowerCase()===ws[0][k].toLowerCase()))k++;return k>=1?ws[0].slice(0,k).join(" "):""}
+function inlineFmt(node,text){const parts=String(text??"").split(/(\*\*[^*]+\*\*)/);for(const p of parts){if(/^\*\*[^*]+\*\*$/.test(p))node.append(el("b",null,p.slice(2,-2)));else if(p)node.append(document.createTextNode(p))}}
+function ansTable(box,t){
+  const cols=(t.ustunlar||[]).map(c=>String(c??""));let rows=(t.qatorlar||[]).map(r=>Array.isArray(r)?r.map(v=>v==null?"":String(v)):[String(r)]).filter(r=>r.some(v=>v.trim()));
+  if(!rows.length)return;let cap=String(t.nom||"");
+  const isTot=r=>/^(jami|umumiy|hammasi|итого|всего)\b/i.test(r[0]);
+  const pre=commonPrefix(rows.filter(r=>!isTot(r)).map(r=>r[0]));
+  if(pre){const re=new RegExp("^"+pre.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\s*","i");rows=rows.map(r=>isTot(r)?r:[r[0].replace(re,"")||r[0],...r.slice(1)]);cap=cap&&cap.toLowerCase()!==pre.toLowerCase()?cap+" · "+pre:pre}
+  const ncols=Math.max(cols.length,...rows.map(r=>r.length));
+  const numCol=Array.from({length:ncols},(_,i)=>i>0&&rows.every(r=>!String(r[i]??"").trim()||isNumCell(r[i])));
+  const wrap=el("div","ans-table");if(cap){const c=el("div","ans-cap",cap);c.append(el("small",null,rows.filter(r=>!isTot(r)).length+" ta qator"));wrap.append(c)}
+  const sc=el("div","scroll");const tb=el("table");
+  if(cols.length){const th=el("thead");const tr=el("tr");for(let i=0;i<ncols;i++)tr.append(el("th",numCol[i]?"num":null,cols[i]||""));th.append(tr);tb.append(th)}
+  const body=el("tbody");
+  for(const r of rows){const total=isTot(r);const tr=el("tr",total?"total":null);
+    for(let i=0;i<ncols;i++){const v=r[i]??"";const n=numCol[i]?cellNum(v):null;const td=el("td",(numCol[i]?"num":"")+(n!=null&&n<0?" neg":"")+(i===0&&!total?" ans-name":""));inlineFmt(td,v);tr.append(td)}
+    body.append(tr)}
+  tb.append(body);sc.append(tb);wrap.append(sc);box.append(wrap)}
+function parseAnswer(text){
+  const out={xulosa:"",qismlar:[]};const lines=String(text??"").replace(/\r/g,"").split("\n");let i=0;
+  const isLi=s=>/^\s*[-•*]\s+/.test(s);const isPipe=s=>/^\s*\|.*\|\s*$/.test(s);
+  const SPECIAL=/^\s*(jami|umumiy|eslatma|diqqat|xulosa|izoh|ogohlantirish|muhim)\b/i;
+  const kv=s=>{const m=s.replace(/^\s*[-•*]\s+/,"").match(/^([^:]{1,60}?):\s*(.+)$/);return m&&m[2].trim()?[m[1].trim(),m[2].trim()]:null};
+  while(i<lines.length){const s=lines[i];if(!s.trim()){i++;continue}
+    if(isPipe(s)){const blk=[];while(i<lines.length&&isPipe(lines[i]))blk.push(lines[i++]);
+      const cells=l=>l.trim().replace(/^\||\|$/g,"").split("|").map(c=>c.trim());const rows=blk.map(cells).filter(r=>!r.every(c=>/^:?-{2,}:?$/.test(c)));
+      if(rows.length>1)out.qismlar.push({t:"table",ustunlar:rows[0],qatorlar:rows.slice(1)});else if(rows.length)out.qismlar.push({t:"table",ustunlar:[],qatorlar:rows});continue}
+    const w=s.match(/^\s*(?:[-•*]\s+)?(eslatma|diqqat|ogohlantirish|muhim)\s*[:!]\s*(.+)$/i);
+    if(w){out.qismlar.push({t:"warn",text:w[2].trim()});i++;continue}
+    if(isLi(s)||(kv(s)&&!SPECIAL.test(s))){const items=[];
+      while(i<lines.length&&lines[i].trim()&&(isLi(lines[i])||(kv(lines[i])&&!SPECIAL.test(lines[i])))&&!/^\s*(?:[-•*]\s+)?(eslatma|diqqat|ogohlantirish|muhim)\s*[:!]/i.test(lines[i]))items.push(lines[i++]);
+      const pairs=items.map(kv);
+      if(pairs.length>=2&&pairs.every(Boolean)&&pairs.filter(p=>isNumCell(p[1].split(/[,(;]/)[0])).length>=Math.ceil(pairs.length/2)){
+        out.qismlar.push({t:"table",ustunlar:[],qatorlar:pairs.map(p=>{const m=p[1].match(/^(.*?)(?:\s*[,(;]\s*(.+?)\)?)?$/);return m&&m[2]?[p[0],m[1].trim(),m[2].trim()]:[p[0],p[1]]})})}
+      else out.qismlar.push({t:"list",items:items.map(x=>x.replace(/^\s*[-•*]\s+/,""))});continue}
+    const j=s.match(/^\s*(jami|umumiy|xulosa)\b[^:]*:\s*(.+)$/i);
+    if(j){const segs=s.split(/\.\s+(?=[^\s:]{1,30}:)/).map(x=>x.trim()).filter(Boolean);const tiles=[];
+      for(const sg of segs){const mm=sg.match(/^(.+?):\s*(.+?)\.?$/);if(mm){const val=mm[2].match(/^(.*?)(?:\s*\((.+)\))?\.?$/);tiles.push({nom:mm[1].trim(),qiymat:(val?val[1]:mm[2]).trim(),izoh:(val&&val[2]||"").trim()})}}
+      if(tiles.length){out.qismlar.push({t:"tiles",tiles});i++;continue}}
+    if(/^\s*#{1,3}\s+/.test(s)||(/:\s*$/.test(s)&&s.trim().length<80)){out.qismlar.push({t:"h",text:s.replace(/^\s*#+\s+/,"").replace(/:\s*$/,"").trim()});i++;continue}
+    const ps=[];while(i<lines.length&&lines[i].trim()&&!isLi(lines[i])&&!isPipe(lines[i])&&!/^\s*(eslatma|diqqat|ogohlantirish|muhim|jami)\b/i.test(lines[i]))ps.push(lines[i++].trim());
+    if(!ps.length)ps.push(lines[i++].trim());
+    out.qismlar.push({t:"p",text:ps.join(" ")})}
+  const f=out.qismlar[0];if(f&&((f.t==="p"&&f.text.length<=170)||f.t==="h")&&out.qismlar.length>1){out.xulosa=f.text;out.qismlar.shift()}
+  return out}
+function answerText(A){const L=[];if(A.xulosa)L.push(A.xulosa);
+  for(const q of A.qismlar){if(q.t==="p"||q.t==="h")L.push(q.text);else if(q.t==="list")L.push(...q.items.map(x=>"- "+x));else if(q.t==="warn")L.push("Eslatma: "+q.text);
+    else if(q.t==="tiles")L.push(q.tiles.map(t=>t.nom+": "+t.qiymat+(t.izoh?" ("+t.izoh+")":"")).join(". "));
+    else if(q.t==="table"){if(q.nom)L.push(q.nom);if(q.ustunlar&&q.ustunlar.length)L.push(q.ustunlar.join(" | "));for(const r of q.qatorlar)L.push((Array.isArray(r)?r:[r]).join(" | "))}}
+  return L.join("\n")}
+function renderAnswer(box,data,opts){opts=opts||{};let A;
+  if(data&&typeof data==="object"){A={xulosa:String(data.xulosa||"").trim(),qismlar:[]};
+    if(Array.isArray(data.raqamlar)&&data.raqamlar.length)A.qismlar.push({t:"tiles",tiles:data.raqamlar.filter(x=>x&&(x.nom||x.qiymat)).map(x=>({nom:String(x.nom||""),qiymat:String(x.qiymat||""),izoh:String(x.izoh||"")}))});
+    const tabs=[].concat(data.jadval||[],data.jadvallar||[]).filter(t=>t&&Array.isArray(t.qatorlar)&&t.qatorlar.length);
+    for(const t of tabs)A.qismlar.push({t:"table",nom:t.nom||t.sarlavha||"",ustunlar:Array.isArray(t.ustunlar)?t.ustunlar:[],qatorlar:t.qatorlar});
+    if(data.javob&&String(data.javob).trim()){const p=parseAnswer(data.javob);if(!A.xulosa&&!tabs.length)A.xulosa=p.xulosa;else if(p.xulosa)p.qismlar.unshift({t:"p",text:p.xulosa});A.qismlar.push(...p.qismlar)}
+    for(const w of(Array.isArray(data.ogohlantirish)?data.ogohlantirish:[]))if(w)A.qismlar.push({t:"warn",text:String(w)})}
+  else A=parseAnswer(data);
+  const card=el("div","ans"+(opts.cls?" "+opts.cls:""));
+  if(opts.who){const h=el("div","ans-who");h.append(ic(opts.icon||"spark"),opts.who);card.append(h)}
+  if(A.xulosa){const x=el("p","ans-x");inlineFmt(x,A.xulosa);card.append(x)}
+  for(const q of A.qismlar){
+    if(q.t==="p"){const p=el("p","ans-p");inlineFmt(p,q.text);card.append(p)}
+    else if(q.t==="h")card.append(el("div","ans-h",q.text));
+    else if(q.t==="list"){const ul=el("ul","ans-ul");for(const it of q.items){const li=el("li");inlineFmt(li,it);ul.append(li)}card.append(ul)}
+    else if(q.t==="warn"){const w=el("div","ans-warn"+(/minus|xato|noto'g'ri|yetishma|muddati o'tgan/i.test(q.text)?" bad":""));w.append(ic("warn"));const sp=el("span");inlineFmt(sp,q.text);w.append(sp);card.append(w)}
+    else if(q.t==="tiles"){const g=el("div","ans-tiles");for(const t of q.tiles){const d=el("div","ans-tile");d.append(el("span",null,t.nom),el("b",null,t.qiymat));if(t.izoh)d.append(el("small",null,t.izoh));g.append(d)}card.append(g)}
+    else if(q.t==="table")ansTable(card,q)}
+  if(!A.xulosa&&!A.qismlar.length)card.append(el("p","ans-p muted",opts.empty||"Javob topilmadi."));
+  if(opts.copy!==false){const f=el("div","ans-foot");const b=el("button","link");b.append(ic("copy"),"Nusxalash");
+    b.onclick=async()=>{const t=answerText(A);try{await navigator.clipboard.writeText(t);b.textContent="Nusxalandi"}catch(e){const ta=el("textarea");ta.value=t;document.body.append(ta);ta.select();try{document.execCommand("copy");b.textContent="Nusxalandi"}catch(e2){b.textContent="Nusxalab bo'lmadi"}ta.remove()}};f.append(b);card.append(f)}
+  box.append(card);return card}
+
 /* assistant */
 function showOut(){const o=$("out");o.hidden=false;o.replaceChildren();return o}
 function showErr(t){const o=showOut();o.append(el("p","err",t))}
@@ -1083,7 +1195,8 @@ Faqat bitta JSON qaytar, boshqa matn yozma.
 Yangi ma'lumot bo'lsa:
 {"amal":"saqlash","yozuvlar":[{"tur":"savdo","sana":"YYYY-MM-DD","mijoz":"...","mahsulot":"...","soni":5,"narx":30,"summa":150,"valyuta":"USD","usul":null,"kategoriya":null,"tannarx":null,"brak":false,"izoh":"","guruh":null,"guruh2":null}],"javob":"Nima saqlanishini 1 gapda aytgan qisqa matn"}
 Savol bo'lsa:
-{"amal":"javob","javob":"to'liq javob matni"}
+{"amal":"javob","xulosa":"Asosiy javob 1 gapda, raqam bilan (masalan: Weslamic omborida jami 272 ta, tannarx bo'yicha 5 440$)","javob":"qo'shimcha izoh kerak bo'lsa 1-3 qator, bo'lmasa bo'sh satr","raqamlar":[{"nom":"Jami","qiymat":"272 ta","izoh":"tannarx 5 440$"}],"jadval":{"nom":"jadval sarlavhasi (tovar turi yoki guruh)","ustunlar":["Model","Qoldiq","Tannarx"],"qatorlar":[["Black 19","16 ta","$20"],["Jami","272 ta",""]]},"ogohlantirish":["faqat haqiqiy muammo, masalan: Pink 19 qoldig'i minusda (−2 ta)"]}
+Javob tuzish qoidalari: 2 va undan ko'p narsa raqam bilan sanalsa — matnga emas, "jadval"ga yoz (har narsa alohida qator, oxirgi qator "Jami" bo'lishi mumkin; ustun nomlari qisqa). Tovar nomlarida takrorlanadigan umumiy qism (masalan "Weslamic peace1") qatorlarda emas, "jadval.nom"da bo'lsin. "raqamlar"ga eng muhim 1-4 ta yakuniy raqamni yoz. Keraksiz maydonni bo'sh qoldir ("javob":"", "raqamlar":[], "jadval":null, "ogohlantirish":[]). Bir nechta jadval kerak bo'lsa "jadvallar":[{...},{...}] ishlat. "xulosa" har doim to'ldirilsin.
 O'chirish buyrug'i bo'lsa:
 {"amal":"ochirish","idlar":["o'chiriladigan yozuvlarning id qiymatlari"],"hammasi":false,"turlar":[],"mahsulotlar":[],"javob":"nima o'chirilishini 1 gapda aytgan matn"}
 Agar TOVARNING O'ZINI (nomini) ombor/tovarlar ro'yxatidan o'chirish so'ralsa ("mahsulotni o'chir", "tovarni ro'yxatdan olib tashla", "ombordagi tovarlarni o'chir", qoldig'i 0 bo'lsa ham): "mahsulotlar" ga ombor ro'yxatidagi aniq nomlarni yoz ("idlar" bo'sh). Bu tovar va uning barcha yozuvlarini o'chiradi. "Ombordagi hamma tovarlarni o'chir" desa — ro'yxatdagi barcha nomlarni yoz. Hech qachon "buni o'chirib bo'lmaydi" dema.
@@ -1137,9 +1250,10 @@ async function send(){
       const items=r.yozuvlar.map(clean);const miss=missing(items);
       if(miss.length){const full=(draft?draft+"\n":"")+msg;logSuhbat("yordamchi",full,r,"tushunmadi",miss.join("; "));autoSorov(full,"Ma'lumot yetishmadi: "+miss.join("; "));draft=full;$("msg").value="";showMissing(miss);return}
       logSuhbat("yordamchi",(draft?draft+"\n":"")+msg,r,"tekshirilmagan");draft=null;showPreview(r,items);return}
-    const jv=String(r.javob||"");const unsure=!jv||UNSURE.test(jv);
-    logSuhbat("yordamchi",msg,r,unsure?"tushunmadi":"tekshirilmagan");let sent=false;if(unsure)sent=await autoSorov(msg,"Daftar aniq javob bera olmadi: "+jv);
-    draft=null;const o2=showOut();o2.append(el("p","answer",jv||"Javob topilmadi."));if(sent)o2.append(el("p","muted","Savolingiz Claude'ga ham yuborildi — aniq javobni \"Claude javoblari\" bo'limiga yozadi."));
+    const jv=[r.xulosa,r.javob].map(x=>String(x||"").trim()).filter(Boolean).join("\n");const hasData=(r.jadval&&Array.isArray(r.jadval.qatorlar)&&r.jadval.qatorlar.length)||(Array.isArray(r.jadvallar)&&r.jadvallar.length)||(Array.isArray(r.raqamlar)&&r.raqamlar.length);
+    const unsure=(!jv&&!hasData)||UNSURE.test(jv);
+    logSuhbat("yordamchi",msg,{...r,javob:jv},unsure?"tushunmadi":"tekshirilmagan");let sent=false;if(unsure)sent=await autoSorov(msg,"Daftar aniq javob bera olmadi: "+jv);
+    draft=null;const o2=showOut();renderAnswer(o2,r,{who:"Yordamchi javobi"});if(sent)o2.append(el("p","muted","Savolingiz Claude'ga ham yuborildi — aniq javobni Claude oynasiga yozadi."));
   }catch(e){if(e&&e.code==="cancelled"){$("out").hidden=true}else{showErr(errText(e&&e.code));if(["invalid_json","refused"].includes(e&&e.code)){logSuhbat("yordamchi",msg,null,"tushunmadi","xato: "+e.code);autoSorov(msg,"Daftar xabarni tushunmadi ("+e.code+")").then(ok=>{if(ok)$("out").append(el("p","muted","Xabaringiz Claude'ga yuborildi — javobni \"Claude javoblari\" bo'limiga yozadi."))})}}}
   finally{$("send").disabled=false;$("stop").hidden=true;ctl=null}
 }
@@ -1292,7 +1406,7 @@ function renderSorovlar(){
   if(!list.length)emptyRow(tb,4,"Hozircha so'rov yo'q. Yordamchi bajara olmagan ishni shu yerga yuboradi.");
   for(const x of list){const tr=el("tr",x.holat==="bajarildi"?"off":"");const st=el("td");st.append(el("span","pill "+(x.holat==="bajarildi"?"p-tolov":"p-chiqim"),x.holat==="bajarildi"?"Bajarildi":"Yangi"));
     tr.append(el("td","date",fmtDate(String(x.yaratildi||"").slice(0,10))),el("td",null,x.matn||""),el("td","who",x.kim||""),st);
-    if(x.javob){const t2=el("tr");const td=el("td","muted");td.colSpan=4;td.textContent="Claude: "+x.javob;t2.append(td);tb.append(tr,t2)}else tb.append(tr)}
+    if(x.javob){const t2=el("tr");const td=el("td");td.colSpan=4;renderAnswer(td,x.javob,{who:"Claude",icon:"headset",copy:false});t2.append(td);tb.append(tr,t2)}else tb.append(tr)}
   $("n-sozlama").textContent=sorovlar.filter(x=>x.holat!=="bajarildi").length||"";
   renderClaude();
 }
@@ -1313,8 +1427,8 @@ function renderClaude(){
   for(const x of waiting.slice(0,8)){const d=el("div","cji");d.append(el("div","q",(x.kim?x.kim+": ":"")+x.matn),el("div","t","Claude javobini kutyapti…"));list.append(d)}
   for(const x of mine.slice(0,20)){const d=el("div","cji"+(fresh.includes(x)?" new":""));
     if(x.natija==="xato")d.append(el("span","pill p-chiqim","Daftar noto'g'ri javob bergan"));
-    d.append(el("div","q",(x.kim?x.kim+": ":"")+x.matn),el("div","a","Claude: "+x.javob));
-    for(const m of (Array.isArray(x.muloqot)?x.muloqot:[]))d.append(el("div",m.claude?"a":"q",(m.claude?"Claude":(m.kim||"Siz"))+": "+m.matn));
+    d.append(el("div","q",(x.kim?x.kim+": ":"")+x.matn));{const a=el("div","a");renderAnswer(a,x.javob,{who:"Claude",icon:"headset",copy:false});d.append(a)}
+    for(const m of (Array.isArray(x.muloqot)?x.muloqot:[])){if(m.claude){const a=el("div","a");renderAnswer(a,m.matn,{who:"Claude",icon:"headset",copy:false});d.append(a)}else d.append(el("div","q",(m.kim||"Siz")+": "+m.matn))}
     const last=Array.isArray(x.muloqot)&&x.muloqot.length?x.muloqot[x.muloqot.length-1]:null;
     d.append(el("div","t",fmtDate(String(x.javobVaqti||x.yaratildi||"").slice(0,10))+(last&&!last.claude?" · Claude javobini kutyapti…":"")));
     const ta=el("textarea");ta.placeholder="Javob yozing…";ta.style.minHeight="44px";ta.setAttribute("aria-label","Claude'ga javob");
@@ -1338,13 +1452,14 @@ async function aiRun(btn,box,task,list,extra){
   if(!sample)return;box.hidden=false;box.replaceChildren();
   if(!list.length&&!extra){box.append(el("p","muted","Tahlil uchun yozuv yo'q."));return}
   const data=list.slice(0,800).map(r=>[r.sana,r.tur,r.mijoz,r.mahsulot,r.soni,r.narx,r.summa,r.valyuta,r.usul,r.kategoriya,isIshchi()?"":r.tannarx,r.brak?"brak":"",r.izoh].map(v=>String(v??"").replace(/[;\n]/g," ")).join(";")).join("\n");
-  const p=el("p","answer muted","O'ylayapti…");box.append(p);btn.disabled=true;
+  const p=el("p","answer muted","O'ylayapti…");box.append(p);btn.disabled=true;let txt="";
   try{await sample(`${task}
 ${extra||""}
 Yozuvlar (sana;tur;mijoz;mahsulot;soni;narx;summa;valyuta;usul;kategoriya;tannarx;brak;izoh):
 ${data}
 
-O'zbek tilida (lotin), qisqa va aniq yoz, Markdown belgilarisiz ("- " ro'yxatlari mumkin). Faqat berilgan ma'lumotga asoslan.`,{cache:false,onText:({text})=>{p.className="answer";p.textContent=text}})}
+O'zbek tilida (lotin), qisqa va aniq yoz. Birinchi qator — 1 gaplik asosiy xulosa. Raqamli ro'yxatlarni "Nom: qiymat" ko'rinishida har birini alohida qatorga yoz, muammolarni "Diqqat: ..." qatorida ber. Markdown belgilarisiz. Faqat berilgan ma'lumotga asoslan.`,{cache:false,onText:({text})=>{txt=text;p.className="answer";p.textContent=text}});
+    box.replaceChildren();renderAnswer(box,txt,{who:"Claude xulosasi"})}
   catch(e){p.className="answer err";p.textContent=(e&&e.text?e.text+"\n\n":"")+errText(e&&e.code)}
   finally{btn.disabled=false}
 }
