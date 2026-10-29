@@ -1,0 +1,30 @@
+rules_version = '2';
+// Savdo Daftari: bazaga faqat kirgan va faol xodimlar kira oladi.
+// kirish/{uid} hujjati bor bo'lsa — xodim faol. Rahbar xodimlarni boshqaradi.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function kirgan() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/kirish/$(request.auth.uid));
+    }
+    function rahbar() {
+      return kirgan()
+        && get(/databases/$(database)/documents/kirish/$(request.auth.uid)).data.rol == 'rahbar';
+    }
+    match /loginlar/{login} {
+      allow read: if true;
+      allow write: if rahbar();
+    }
+    match /kirish/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || rahbar());
+      allow write: if rahbar();
+    }
+    match /xodimlar/{id} {
+      allow read: if kirgan();
+      allow write: if rahbar();
+    }
+    match /{coll}/{doc=**} {
+      allow read, write: if kirgan() && !(coll in ['loginlar', 'kirish', 'xodimlar']);
+    }
+  }
+}

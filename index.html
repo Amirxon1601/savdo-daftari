@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Savdo Daftari</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 </head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -672,12 +672,13 @@ th{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
     <div class="card" id="xd-card">
       <h3><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg>Xodimlar: login va parollar</h3>
       <p class="muted formline" id="xd-hint"></p>
-      <div class="scroll"><table><thead><tr><th>Ism</th><th>Login</th><th>Roli</th><th>Holati</th><th class="num">Amallar</th></tr></thead><tbody id="xd-rows"></tbody></table></div>
+      <div class="scroll"><table><thead><tr><th>Ism</th><th>Login</th><th>Lavozimi</th><th>Roli</th><th>Holati</th><th class="num">Amallar</th></tr></thead><tbody id="xd-rows"></tbody></table></div>
       <h3 style="margin-top:16px">Yangi xodim qo'shish</h3>
       <div class="xadd">
         <div class="f"><label for="xd-ism">Ismi</label><input id="xd-ism" placeholder="masalan Ali"></div>
         <div class="f"><label for="xd-login">Login</label><input id="xd-login" placeholder="ali" autocomplete="off" autocapitalize="off"></div>
         <div class="f"><label for="xd-pass">Parol (kamida 6 belgi)</label><input id="xd-pass" type="password" autocomplete="new-password"></div>
+        <div class="f"><label for="xd-lav">Lavozimi</label><input id="xd-lav" placeholder="masalan Sotuv menejeri" list="xd-lavlar"><datalist id="xd-lavlar"><option value="Sotuv menejeri"><option value="Omborchi va sotuvchi"><option value="Online sotuvchi"><option value="Hisobchi"><option value="Bot"></datalist></div>
         <div class="f"><label for="xd-rol">Roli</label><select id="xd-rol"><option value="ishchi">Ishchi</option><option value="rahbar">Rahbar</option></select></div>
         <div class="f"><button class="go" id="xd-add">Qo'shish</button></div>
       </div>
@@ -1743,30 +1744,56 @@ $("t-hisobot").addEventListener("click",()=>{renderCharts();renderSellers()});
 
 /* ================= XODIMLAR: LOGIN VA PAROL ================= */
 function isIshchi(){return!!me&&me.rol!=="rahbar"}
-const SKEY="savdo-daftari-xodim";
-function storeGet(){try{return localStorage.getItem(SKEY)}catch(e){return null}}
-function storeSet(v){try{v?localStorage.setItem(SKEY,v):localStorage.removeItem(SKEY)}catch(e){}}
+/* Kirish Firebase Authentication orqali. Har bir xodimning Auth hisobi bor (login@savdo-daftari.app),
+   kirish/{uid} hujjati bo'lsa — bazaga kira oladi (Firestore qoidalari shuni tekshiradi). */
+const EMAIL_DOMAIN="savdo-daftari.app";
 const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
 async function phash(pass,salt){
   if(!window.crypto||!crypto.subtle)throw{code:"nocrypto"};
   const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveBits"]);
   return hex(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(salt),iterations:150000},k,256));
 }
-function newSalt(){const a=new Uint8Array(16);crypto.getRandomValues(a);return hex(a)}
+function rnd(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return hex(a)}
 const normLogin=v=>String(v||"").trim().toLowerCase();
 const activeX=()=>xodimlar.filter(x=>x.faol!==false);
 const xid=login=>"x-"+slug(login).slice(2);
+let authUser=null,authReady=false,auth=null,_auth2=null;
+function auth2(){if(!_auth2){const a=firebase.initializeApp(window.FIREBASE_CONFIG,"yaratish");_auth2=a.auth();_auth2.setPersistence(firebase.auth.Auth.Persistence.NONE).catch(()=>{})}return _auth2}
+async function emailOf(login){try{const d=await db.collection("loginlar").doc(login).get();if(d.exists&&d.data().email)return d.data().email}catch(e){}return login+"@"+EMAIL_DOMAIN}
+/* yangi Auth hisob (joriy kirishni buzmasdan) -> uid, email */
+async function makeAccount(login,pass){
+  let email=login+"@"+EMAIL_DOMAIN;
+  for(let i=0;i<3;i++){
+    try{const c=await auth2().createUserWithEmailAndPassword(email,pass);const uid=c.user.uid;await auth2().signOut().catch(()=>{});return{uid,email}}
+    catch(e){if(e&&e.code==="auth/email-already-in-use"){email=login+"."+rnd(3)+"@"+EMAIL_DOMAIN;continue}throw e}
+  }
+  throw{code:"auth/email-already-in-use"};
+}
+async function linkAccount(x,acc,rol){
+  await db.collection("kirish").doc(acc.uid).set({xodim:x.id,login:x.login,rol:rol||x.rol||"ishchi",yaratildi:new Date().toISOString()});
+  await db.collection("loginlar").doc(x.login).set({email:acc.email});
+  const old=x.uid&&x.uid!==acc.uid?x.uid:null;
+  await db.collection("xodimlar").doc(x.id).update({uid:acc.uid,email:acc.email,salt:firebase.firestore.FieldValue.delete(),hash:firebase.firestore.FieldValue.delete(),yangilandi:new Date().toISOString()});
+  if(old)await db.collection("kirish").doc(old).delete().catch(()=>{});
+}
+function authErr(e){const c=e&&e.code||"";
+  if(c==="nocrypto")return"Bu brauzerda kirib bo'lmaydi. Boshqa brauzerda oching.";
+  if(c==="auth/weak-password")return"Parol juda oddiy, kamida 6 belgi bo'lsin.";
+  if(c==="auth/too-many-requests")return"Ko'p urinish bo'ldi. Bir necha daqiqadan keyin qayta urinib ko'ring.";
+  if(c==="auth/network-request-failed")return"Internet yo'q. Ulanishni tekshiring.";
+  if(c==="auth/operation-not-allowed"||c==="auth/configuration-not-found")return"Firebase'da Email/Password kirish yoqilmagan (Authentication bo'limi).";
+  return"Xatolik: "+(c||(e&&e.message)||"noma'lum")}
 
 function applyAuth(){setTimeout(()=>{try{renderClaude()}catch(e){}},0);
   document.body.classList.remove("pending");
-  const act=activeX();
-  if(me)me=act.find(x=>x.id===me.id)||null;
-  if(!me&&xodimLoaded){const sid=storeGet();if(sid)me=act.find(x=>x.id===sid)||null;if(!me)storeSet(null)}
-  const locked=xodimLoaded&&act.length>0&&!me;
+  const act=activeX();me=null;
+  if(authUser&&xodimLoaded){me=act.find(x=>x.uid===authUser.uid)||null;
+    if(!me&&xodimlar.some(x=>x.uid===authUser.uid&&x.faol===false)){auth.signOut();formMsg("l-msg","Sizning kirishingiz to'xtatilgan.")}}
+  const locked=authReady&&!me;
   document.body.classList.toggle("locked",locked);$("lock").hidden=!locked;
   document.body.classList.toggle("ishchi",isIshchi());
   $("me").hidden=!me;
-  if(me){$("me-name").textContent=me.ism;$("me-av").textContent=String(me.ism||"?").trim().charAt(0).toUpperCase();const r=$("me-role");r.textContent=me.rol==="rahbar"?"Rahbar":"Ishchi";r.className="role "+(me.rol==="rahbar"?"rahbar":"")}
+  if(me){$("me-name").textContent=me.ism;$("me-av").textContent=String(me.ism||"?").trim().charAt(0).toUpperCase();const r=$("me-role");r.textContent=me.rol==="rahbar"?"Rahbar":(me.lavozim||"Ishchi");r.className="role "+(me.rol==="rahbar"?"rahbar":"")}
   if(isIshchi()&&tab==="foyda")setTab("savdo");
   if(locked)setTimeout(()=>{if(document.activeElement!==$("l-pass"))$("l-login").focus()},0);
   render();
@@ -1775,41 +1802,48 @@ let loginBusy=false;
 async function doLogin(){
   if(loginBusy)return;const lg=normLogin($("l-login").value),ps=$("l-pass").value;
   if(!lg||!ps){formMsg("l-msg","Login va parolni yozing.");return}
+  if(!auth){formMsg("l-msg","Baza hali ulanmadi, birozdan keyin urinib ko'ring.");return}
   loginBusy=true;$("l-go").disabled=true;$("l-msg").textContent="";
-  try{const x=activeX().find(k=>k.login===lg);let ok=false;
-    if(x&&x.salt&&x.hash)ok=(await phash(ps,x.salt))===x.hash;
-    else await phash(ps,"dummy-salt");
-    if(!ok){await new Promise(r=>setTimeout(r,700));formMsg("l-msg","Login yoki parol noto'g'ri.");$("l-pass").select();return}
-    me=x;storeSet(x.id);$("l-pass").value="";$("l-login").value="";applyAuth();
-  }catch(e){formMsg("l-msg",e&&e.code==="nocrypto"?"Bu brauzerda kirib bo'lmaydi. Boshqa brauzerda oching.":"Kirib bo'lmadi. Qayta urinib ko'ring.")}
+  try{
+    try{await auth.signInWithEmailAndPassword(await emailOf(lg),ps)}
+    catch(e){const c=e&&e.code||"";
+      if(!/user-not-found|invalid-credential|invalid-login-credentials|wrong-password|invalid-email/.test(c))throw e;
+      /* eski (Auth'gacha bo'lgan) parol: bir marta tekshirib, Auth hisobiga o'tkazamiz */
+      let x=null;try{const q=await db.collection("xodimlar").where("login","==",lg).limit(1).get();if(!q.empty)x={id:q.docs[0].id,...q.docs[0].data()}}catch(_){}
+      const ok=x&&x.faol!==false&&x.salt&&x.hash&&(await phash(ps,x.salt))===x.hash;
+      if(!ok){await new Promise(r=>setTimeout(r,700));formMsg("l-msg","Login yoki parol noto'g'ri.");$("l-pass").select();return}
+      const acc=await makeAccount(lg,ps);await linkAccount(x,acc,x.rol);
+      await auth.signInWithEmailAndPassword(acc.email,ps);
+    }
+    $("l-pass").value="";$("l-login").value="";
+  }catch(e){formMsg("l-msg",authErr(e))}
   finally{loginBusy=false;$("l-go").disabled=false}
 }
 $("l-go").onclick=doLogin;
 for(const id of ["l-login","l-pass"])$(id).addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();id==="l-login"?$("l-pass").focus():doLogin()}});
-$("logout").onclick=()=>{me=null;storeSet(null);confirmId=null;pending=null;pendingDel=null;$("out").hidden=true;$("tg").hidden=true;applyAuth()};
+$("logout").onclick=()=>{confirmId=null;pending=null;pendingDel=null;$("out").hidden=true;$("tg").hidden=true;if(auth)auth.signOut()};
 
 function canManage(){return!isIshchi()}
 function renderXodimlar(){
   const act=activeX(),rahbars=act.filter(x=>x.rol==="rahbar");
-  const first=!xodimlar.length;
-  $("xd-hint").textContent=first
-    ?"Hozircha daftar parolsiz ochiladi. Avval o'zingizga Rahbar login va parol yarating. Shundan keyin daftar faqat login va parol bilan ochiladi, keyin ishchilarni qo'shasiz."
-    :"Daftar faqat shu ro'yxatdagi faol xodimlarning login va paroli bilan ochiladi. Xodim ketsa, \"To'xtatish\" ni bosing — u boshqa kira olmaydi.";
-  const rs=$("xd-rol");if(first){rs.value="rahbar";rs.disabled=true}else rs.disabled=false;
+  $("xd-hint").textContent="Daftar faqat shu ro'yxatdagi faol xodimlarning login va paroli bilan ochiladi. Xodim ketsa, \"To'xtatish\" ni bosing — u boshqa kira olmaydi. \"Kutilmoqda\" — xodim hali yangi tizimda bir marta kirmagan (yoki unga yangi parol qo'ying).";
+  $("xd-rol").disabled=false;
   const tb=$("xd-rows");tb.replaceChildren();
-  if(!xodimlar.length)emptyRow(tb,5,"Hali xodim yo'q.");
+  if(!xodimlar.length)emptyRow(tb,6,"Hali xodim yo'q.");
   const sorted=[...xodimlar].sort((a,b)=>(a.rol===b.rol?0:a.rol==="rahbar"?-1:1)||String(a.ism).localeCompare(String(b.ism)));
   for(const x of sorted){
     const tr=el("tr",x.faol===false?"off":"");const rp=el("span","role "+(x.rol==="rahbar"?"rahbar":""),x.rol==="rahbar"?"Rahbar":"Ishchi");const rc=el("td");rc.append(rp);
     const acts=el("td","num");const w=el("span","row");w.style.justifyContent="flex-end";w.style.gap="6px";
     const lastBoss=x.rol==="rahbar"&&x.faol!==false&&rahbars.length<=1;
     const pw=el("button","link","Parolni almashtirish");pw.onclick=()=>changePass(x,tr);
-    const tg=el("button","link",x.faol===false?"Qayta yoqish":"To'xtatish");tg.disabled=lastBoss;if(lastBoss)tg.title="Kamida bitta faol rahbar bo'lishi kerak";
-    tg.onclick=()=>xUpdate(x,{faol:x.faol===false})
+    const lv=el("button","link","Lavozim");lv.onclick=()=>{const v=prompt(x.ism+" lavozimi:",x.lavozim||"");if(v!=null)xUpdate(x,{lavozim:v.trim().slice(0,60)})};
+    const tg=el("button","link",x.faol===false?"Qayta yoqish":"To'xtatish");tg.disabled=lastBoss||(me&&me.id===x.id);if(lastBoss)tg.title="Kamida bitta faol rahbar bo'lishi kerak";
+    tg.onclick=()=>setActive(x,x.faol===false);
     const rl=el("button","link",x.rol==="rahbar"?"Ishchi qilish":"Rahbar qilish");rl.disabled=lastBoss;if(lastBoss)rl.title="Kamida bitta faol rahbar bo'lishi kerak";
-    rl.onclick=()=>xUpdate(x,{rol:x.rol==="rahbar"?"ishchi":"rahbar"});
-    w.append(pw,rl,tg);acts.append(w);
-    tr.append(el("td",null,x.ism+(me&&me.id===x.id?" (siz)":"")),el("td","who",x.login),rc,el("td",null,x.faol===false?"To'xtatilgan":"Faol"),acts);tb.append(tr);
+    rl.onclick=()=>setRole(x,x.rol==="rahbar"?"ishchi":"rahbar");
+    w.append(pw,lv,rl,tg);acts.append(w);
+    const holat=x.faol===false?"To'xtatilgan":(x.uid?"Faol":"Kutilmoqda");
+    tr.append(el("td",null,x.ism+(me&&me.id===x.id?" (siz)":"")),el("td","who",x.login),el("td",null,x.lavozim||"—"),rc,el("td",null,holat),acts);tb.append(tr);
   }
 }
 async function xUpdate(x,patch){
@@ -1817,30 +1851,40 @@ async function xUpdate(x,patch){
   try{await db.collection("xodimlar").doc(x.id).update({...patch,yangilandi:new Date().toISOString()});formMsg("xd-msg","Saqlandi.",true)}
   catch(e){formMsg("xd-msg","Saqlab bo'lmadi. Qayta urinib ko'ring.")}
 }
+async function setActive(x,on){if(!db||!canManage())return;
+  try{if(x.uid){if(on)await db.collection("kirish").doc(x.uid).set({xodim:x.id,login:x.login,rol:x.rol||"ishchi",yaratildi:new Date().toISOString()});else await db.collection("kirish").doc(x.uid).delete()}
+    await xUpdate(x,{faol:on})}catch(e){formMsg("xd-msg","Saqlab bo'lmadi: "+authErr(e))}}
+async function setRole(x,rol){if(!db||!canManage())return;
+  try{if(x.uid&&x.faol!==false)await db.collection("kirish").doc(x.uid).set({rol},{merge:true});await xUpdate(x,{rol})}catch(e){formMsg("xd-msg","Saqlab bo'lmadi: "+authErr(e))}}
 function changePass(x,tr){
   const old=tr.nextElementSibling;if(old&&old.classList.contains("pwrow")){old.remove();return}
-  const r=el("tr","pwrow");const td=el("td");td.colSpan=5;const w=el("div","row");w.style.justifyContent="flex-end";
-  const i=el("input");i.type="password";i.autocomplete="new-password";i.placeholder="Yangi parol (kamida 6 belgi)";i.setAttribute("aria-label",x.ism+" uchun yangi parol");i.style.maxWidth="260px";
+  const r=el("tr","pwrow");const td=el("td");td.colSpan=6;const w=el("div","row");w.style.justifyContent="flex-end";
+  const i=el("input");i.type="password";i.autocomplete="new-password";i.placeholder="Yangi parol (kamida 8 belgi)";i.setAttribute("aria-label",x.ism+" uchun yangi parol");i.style.maxWidth="260px";
   const b=el("button","primary","Saqlash"),c=el("button",null,"Bekor");c.onclick=()=>r.remove();
-  b.onclick=async()=>{if(i.value.length<6){formMsg("xd-msg","Parol kamida 6 belgidan iborat bo'lsin.");return}b.disabled=true;
-    try{const salt=newSalt();await xUpdate(x,{salt,hash:await phash(i.value,salt)});formMsg("xd-msg",x.ism+" uchun yangi parol saqlandi.",true);r.remove()}
-    catch(e){formMsg("xd-msg","Saqlab bo'lmadi.");b.disabled=false}};
+  b.onclick=async()=>{if(i.value.length<8){formMsg("xd-msg","Parol kamida 8 belgidan iborat bo'lsin.");return}b.disabled=true;
+    try{
+      if(me&&me.id===x.id&&authUser){
+        try{await authUser.updatePassword(i.value)}
+        catch(e){if(e&&e.code==="auth/requires-recent-login"){formMsg("xd-msg","Xavfsizlik uchun: chiqib, qayta kiring va parolni darhol almashtiring.");b.disabled=false;return}throw e}
+      }else{const acc=await makeAccount(x.login,i.value);await linkAccount(x,acc,x.rol);if(x.faol===false)await db.collection("kirish").doc(acc.uid).delete()}
+      formMsg("xd-msg",x.ism+" uchun yangi parol saqlandi. Eski parol endi ishlamaydi.",true);r.remove()}
+    catch(e){formMsg("xd-msg","Saqlab bo'lmadi: "+authErr(e));b.disabled=false}};
   w.append(i,c,b);td.append(w);r.append(td);tr.after(r);i.focus();
 }
 $("xd-add").onclick=async()=>{
   if(!db||!canManage())return;
-  const ism=$("xd-ism").value.trim(),login=normLogin($("xd-login").value),pass=$("xd-pass").value,first=!xodimlar.length,rol=first?"rahbar":$("xd-rol").value;
+  const ism=$("xd-ism").value.trim(),login=normLogin($("xd-login").value),pass=$("xd-pass").value,rol=$("xd-rol").value,lavozim=$("xd-lav").value.trim().slice(0,60);
   if(!ism||!login||!pass){formMsg("xd-msg","Ism, login va parolni yozing.");return}
   if(!/^[a-z0-9._-]{3,30}$/.test(login)){formMsg("xd-msg","Login 3–30 belgi bo'lsin: lotin harflari, raqamlar, nuqta yoki chiziqcha. Masalan: ali, vali.1");return}
-  if(pass.length<6){formMsg("xd-msg","Parol kamida 6 belgidan iborat bo'lsin.");return}
+  if(pass.length<8){formMsg("xd-msg","Parol kamida 8 belgidan iborat bo'lsin.");return}
   if(xodimlar.some(x=>x.login===login)){formMsg("xd-msg","Bunday login bor. Boshqasini tanlang.");return}
   $("xd-add").disabled=true;
-  try{const salt=newSalt(),hash=await phash(pass,salt),id=xid(login);
-    await db.collection("xodimlar").doc(id).set({ism:ism.slice(0,60),login,rol,faol:true,salt,hash,yaratildi:new Date().toISOString()});
-    for(const k of ["xd-ism","xd-login","xd-pass"])$(k).value="";
-    if(first){me={id,ism,login,rol,faol:true};storeSet(id);formMsg("xd-msg","Rahbar login yaratildi. Endi daftar faqat login va parol bilan ochiladi. Endi ishchilarni qo'shing.",true)}
-    else formMsg("xd-msg",ism+" qo'shildi. Unga loginini ("+login+") va parolini ayting.",true);
-  }catch(e){formMsg("xd-msg",e&&e.code==="nocrypto"?"Bu brauzerda parol yaratib bo'lmaydi.":"Saqlab bo'lmadi. Qayta urinib ko'ring.")}
+  try{const id=xid(login);
+    await db.collection("xodimlar").doc(id).set({ism:ism.slice(0,60),login,rol,lavozim,faol:true,yaratildi:new Date().toISOString()});
+    const acc=await makeAccount(login,pass);await linkAccount({id,login,rol},acc,rol);
+    for(const k of ["xd-ism","xd-login","xd-pass","xd-lav"])$(k).value="";
+    formMsg("xd-msg",ism+" qo'shildi. Unga loginini ("+login+") va parolini ayting.",true);
+  }catch(e){formMsg("xd-msg","Saqlab bo'lmadi: "+authErr(e))}
   finally{$("xd-add").disabled=false}
 };
 
@@ -1964,7 +2008,7 @@ render();
   const cfg=window.FIREBASE_CONFIG;
   if(!cfg||!cfg.projectId||cfg.projectId==="SIZNING-PROJECT-ID"){document.body.classList.remove("pending");showErr("firebase-config.js to'ldirilmagan. Firebase loyiha ma'lumotlarini kiriting.");$("send").disabled=true;return}
   try{firebase.initializeApp(cfg)}catch(e){document.body.classList.remove("pending");showErr("Firebase'ga ulanib bo'lmadi: "+e.message);return}
-  db=firebase.firestore();
+  db=firebase.firestore();auth=firebase.auth();
   // artifact db'dagi doc.acquire() qulfi: Firestore tranzaksiyasi bilan
   firebase.firestore.DocumentReference.prototype.acquire=async function({holder,ttlMs}){
     const now=Date.now();
@@ -1974,22 +2018,30 @@ render();
   };
   downloads={save:async({filename,data})=>{const blob=data instanceof Blob?data:new Blob([data]);const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}};
   sample=null;user=null;myId=null;
-  // AI yordamchi: xabar `sorovlar`ga yoziladi, Claude har soat o'qib javob beradi va saqlaydi (Claude tugmasida ko'rinadi)
+  // AI yordamchi: xabar `sorovlar`ga yoziladi, noutbukdagi Savdo AI bot darhol javob beradi va saqlaydi (Claude tugmasida ko'rinadi)
   const viaClaude=async(inputId,sabab,msgEl)=>{const t=$(inputId).value.trim();if(!t)return;const ok=await autoSorov(t,sabab);
-    if(ok){$(inputId).value="";cjOpen(true);if(msgEl)msgEl.textContent="Claude'ga yuborildi. Javobi bir soat ichida Claude oynasida chiqadi."}else showErr("Yuborib bo'lmadi, qayta urinib ko'ring.")};
+    if(ok){$(inputId).value="";cjOpen(true);if(msgEl)msgEl.textContent="Claude'ga yuborildi. Javobi bir necha soniyada Claude oynasida chiqadi."}else showErr("Yuborib bo'lmadi, qayta urinib ko'ring.")};
   $("send").onclick=()=>viaClaude("msg","Yordamchi (sayt)");
   $("tg-send").onclick=()=>viaClaude("tg-msg","Telegram'dan kiritish (sayt)");
-  $("send").title="Claude bir soat ichida javob beradi";$("tg-send").title="Claude bir soat ichida ajratib saqlaydi";
-  const hint=document.querySelector(".assistant:not(.tgbox) .ahead small");if(hint)hint.textContent="Yozganingiz Claude'ga boradi, u bir soat ichida javob beradi yoki daftarga saqlaydi. Javob Claude tugmasida ko'rinadi.";
+  $("send").title="Claude bir necha soniyada javob beradi";$("tg-send").title="Claude bir necha soniyada ajratib saqlaydi";
+  const hint=document.querySelector(".assistant:not(.tgbox) .ahead small");if(hint)hint.textContent="Yozganingiz Claude'ga boradi, u bir necha soniyada javob beradi yoki daftarga saqlaydi. Javob Claude tugmasida ko'rinadi.";
   for(const id of ["s-ai","r-ai","f-ai"]){const el=$(id);if(el)el.hidden=true}
-  const cjs=document.querySelector(".cj-head small");if(cjs)cjs.textContent="Har soat tekshirib javob beradi";
-  db.collection("arxiv").limit(1000).onSnapshot(snap=>{arcDocs=snap.docs.map(x=>({id:x.id,...x.data()}));arcRecs=[];for(const d of arcDocs)for(const y of (Array.isArray(d.yozuvlar)?d.yozuvlar:[]))if(y&&y.id)arcRecs.push({...y,_arxiv:d.id});arcLoaded=true;mergeRecords()},()=>{arcLoaded=true;mergeRecords()});
-  db.collection("yozuvlar").orderBy("sana","desc").limit(1000).onSnapshot(snap=>{liveRecs=snap.docs.map(x=>({id:x.id,...x.data()}));liveLoaded=true;mergeRecords()},()=>showErr("Daftar bilan aloqa uzildi. Sahifani qayta yuklang."));
-  db.collection("xodimlar").limit(500).onSnapshot(snap=>{xodimlar=snap.docs.map(x=>({id:x.id,...x.data()})).filter(x=>x.login);xodimLoaded=true;applyAuth()},()=>{xodimLoaded=true;applyAuth()});
-  db.collection("sorovlar").limit(200).onSnapshot(snap=>{sorovlar=snap.docs.map(x=>({id:x.id,...x.data()}));renderSorovlar()},()=>{});
-  db.collection("sozlamalar").doc("asosiy").onSnapshot(snap=>{settings={kurs:null,low:5,...(snap.exists?snap.data():{})};render()},()=>{});
-  db.collection("mijozlar").limit(1000).onSnapshot(snap=>{const m={};for(const x of snap.docs){const v=x.data();if(v&&v.nomi)m[v.nomi]={...v,_id:x.id}}clients=m;render()},()=>{});
-  db.collection("mahsulotlar").limit(1000).onSnapshot(snap=>{const p={};for(const x of snap.docs){const v=x.data();if(v&&v.nomi)p[v.nomi]={...v,_id:x.id}}products=p;render()},()=>{});
+  const cjs=document.querySelector(".cj-head small");if(cjs)cjs.textContent="Bir necha soniyada javob beradi";
+  let unsubs=[],retry=null;
+  function stopData(){for(const u of unsubs)try{u()}catch(e){}unsubs=[];clearTimeout(retry)}
+  function denied(e){if(e&&e.code==="permission-denied"&&authUser){clearTimeout(retry);retry=setTimeout(()=>{stopData();startData()},3000);return true}return false}
+  function startData(){stopData();const on=(q,ok,bad)=>unsubs.push(q.onSnapshot(ok,e=>{if(!denied(e)&&bad)bad(e)}));
+  on(db.collection("arxiv").limit(1000),snap=>{arcDocs=snap.docs.map(x=>({id:x.id,...x.data()}));arcRecs=[];for(const d of arcDocs)for(const y of (Array.isArray(d.yozuvlar)?d.yozuvlar:[]))if(y&&y.id)arcRecs.push({...y,_arxiv:d.id});arcLoaded=true;mergeRecords()},()=>{arcLoaded=true;mergeRecords()});
+  on(db.collection("yozuvlar").orderBy("sana","desc").limit(1000),snap=>{liveRecs=snap.docs.map(x=>({id:x.id,...x.data()}));liveLoaded=true;mergeRecords()},()=>showErr("Daftar bilan aloqa uzildi. Sahifani qayta yuklang."));
+  on(db.collection("xodimlar").limit(500),snap=>{xodimlar=snap.docs.map(x=>({id:x.id,...x.data()})).filter(x=>x.login);xodimLoaded=true;applyAuth()},()=>{xodimLoaded=true;applyAuth()});
+  on(db.collection("sorovlar").limit(200),snap=>{sorovlar=snap.docs.map(x=>({id:x.id,...x.data()}));renderSorovlar()},()=>{});
+  on(db.collection("sozlamalar").doc("asosiy"),snap=>{settings={kurs:null,low:5,...(snap.exists?snap.data():{})};render()},()=>{});
+  on(db.collection("mijozlar").limit(1000),snap=>{const m={};for(const x of snap.docs){const v=x.data();if(v&&v.nomi)m[v.nomi]={...v,_id:x.id}}clients=m;render()},()=>{});
+  on(db.collection("mahsulotlar").limit(1000),snap=>{const p={};for(const x of snap.docs){const v=x.data();if(v&&v.nomi)p[v.nomi]={...v,_id:x.id}}products=p;render()},()=>{});
+  }
+  auth.onAuthStateChanged(u=>{authUser=u;authReady=true;
+    if(u){startData()}else{stopData();xodimlar=[];xodimLoaded=false;liveRecs=[];arcRecs=[];arcDocs=[];sorovlar=[];clients={};products={};try{mergeRecords()}catch(e){}}
+    applyAuth()});
 })();
 </script>
 
