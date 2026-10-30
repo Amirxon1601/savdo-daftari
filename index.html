@@ -142,15 +142,7 @@ select,input[type=date],input[type=search],input[type=text],input[type=number],i
 .notice.miss{background:var(--warn-soft)}.notice.miss h3{color:var(--warn)}
 .notice ul{margin:0;padding-left:20px}
 .notice table{background:var(--surface);border-radius:8px}
-.cj-fab{position:fixed;right:20px;bottom:20px;z-index:40;width:56px;height:56px;border-radius:50%;padding:0;background:var(--lapis);border-color:var(--lapis);color:#fff;box-shadow:var(--lift)}
-.cj-fab .ic{width:26px;height:26px}
-.cj-fab:hover{filter:brightness(1.08)}
-.cj-badge{position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;border-radius:99px;background:var(--danger);color:#fff;font-size:11.5px;font-weight:700;display:grid;place-items:center;padding:0 5px;border:2px solid var(--bg)}
-.cj-panel{position:fixed;right:20px;bottom:88px;z-index:41;width:min(400px,calc(100vw - 32px));max-height:min(72vh,640px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--lift);padding:14px;display:grid;gap:12px;align-content:start}
-.cj-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.cj-head h2{font-size:17px;font-weight:800}.cj-head small{color:var(--muted);font-size:12.5px}
-.cj-new{display:grid;gap:8px}
-@media (max-width:900px){.cj-fab{bottom:calc(84px + env(safe-area-inset-bottom,0px));right:16px;width:52px;height:52px}.cj-panel{right:16px;left:16px;width:auto;bottom:calc(146px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 220px)}}.cjl{display:grid;gap:8px}.cji{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:4px;background:var(--surface2)}.cji.new{border-color:var(--karta);background:var(--karta-soft)}.cji .q{font-size:13px;color:var(--muted)}.cji .a{white-space:pre-wrap}.cji .t{font-size:12px;color:var(--muted)}.cji .pill{justify-self:start}
+.cjl{display:grid;gap:8px;margin-top:4px}.cjl:empty{display:none}.cji{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:4px;background:var(--surface2)}.cji.new{border-color:var(--karta);background:var(--karta-soft)}.cji .q{font-size:13px;color:var(--muted)}.cji .a{white-space:pre-wrap}.cji .t{font-size:12px;color:var(--muted)}.cji .pill{justify-self:start}
 .warnline{color:var(--warn);font-weight:600;margin:0;font-size:14px}
 
 /* ---------- alerts */
@@ -412,12 +404,6 @@ th{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
   <div class="gsel" id="gsel" role="group" aria-label="Guruh bo'yicha ko'rish"></div>
   <div class="glance" id="glance"></div>
   <div class="alerts" id="alerts"></div>
-  <button class="cj-fab" id="cj-fab" type="button" aria-label="Claude yordamchi" aria-expanded="false" aria-controls="cj-panel"><svg class="ic" aria-hidden="true"><use href="#i-headset"/></svg><span class="cj-badge" id="cj-badge" hidden></span></button>
-  <section class="cj-panel" id="cj-panel" hidden aria-label="Claude yordamchi">
-    <div class="cj-head"><div><h2>Claude bilan yozishma</h2><small>Daftar bilmagan narsani Claude'ga yozasiz, u har soatda tekshirib javob beradi</small></div><button class="ghost" id="cj-close" type="button" aria-label="Yopish"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button></div>
-    <div class="cj-new"><textarea id="cj-new" placeholder="Claude'ga yozing: savol, tuzatish, yangi narx…" aria-label="Claude'ga yangi xabar"></textarea><div class="row"><button class="primary" id="cj-send" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Yuborish</button><span class="muted" id="cj-msg"></span></div></div>
-    <div id="cj-list" class="cjl"></div>
-  </section>
 
   <section class="assistant tgbox" id="tg" hidden aria-label="Telegram'dan kiritish">
     <div class="ahead"><span class="ico"><svg class="ic" aria-hidden="true"><use href="#i-tg"/></svg></span><div><label for="tg-msg">Telegram'dan kiritish</label><small>Guruhdagi xabarlarni nusxalab shu yerga qo'ying, bir kunlik yoki bir nechtasini birdaniga</small></div></div>
@@ -432,7 +418,7 @@ th{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
   </section>
 
   <section class="assistant" aria-label="Yordamchi">
-    <div class="ahead"><span class="ico"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg></span><div><label for="msg">Yordamchi</label><small>Savdo, to'lov, rasxod yoki savolni oddiy so'z bilan yozing. Saqlash faqat siz tasdiqlaganda bo'ladi.</small></div></div>
+    <div class="ahead"><span class="ico"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg></span><div><label for="msg">Yordamchi</label><small>Savdo, to'lov, rasxod yoki savolni oddiy so'z bilan yozing. Claude bir daqiqa ichida saqlaydi yoki javob beradi — javob shu yerda, pastda chiqadi.</small></div></div>
     <textarea id="msg" rows="2" placeholder="Masalan: Umar bugun 5 ta iZikr Black 12 oldi, 30$ dan"></textarea>
     <div class="row">
       <div class="exs" aria-label="Namunalar"><button class="ex">Umar 200$ naqd berdi</button><button class="ex">50 ta Gold 10 keldi, 18$ dan</button><button class="ex">Gold 10 yo'l kirasiga 40$ naqd</button><button class="ex">Bugun qancha sotdik?</button></div>
@@ -440,6 +426,7 @@ th{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
       <button id="send" class="primary"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Yuborish</button>
     </div>
     <div class="out" id="out" hidden></div>
+    <div id="cj-list" class="cjl"></div>
   </section>
 
   <!-- SAVDO -->
@@ -1413,19 +1400,17 @@ function renderSorovlar(){
 function seenGet(){try{return new Set(JSON.parse(localStorage.getItem("cj-seen")||"[]"))}catch(e){return new Set()}}
 function seenSet(ids){try{localStorage.setItem("cj-seen",JSON.stringify([...ids].slice(-500)))}catch(e){}}
 function renderClaude(){
-  const panel=$("cj-panel"),list=$("cj-list"),badge=$("cj-badge");if(!panel||!list||!badge)return;
+  const list=$("cj-list");if(!list)return;
   if(list.contains(document.activeElement)&&document.activeElement.value){setTimeout(renderClaude,3000);return}
   const vis=x=>!isIshchi()||x.kimId===meId();
   const mine=sorovlar.filter(x=>x.javob&&vis(x)).sort((a,b)=>String(b.javobVaqti||b.yaratildi).localeCompare(String(a.javobVaqti||a.yaratildi)));
   const waiting=sorovlar.filter(x=>!x.javob&&x.holat!=="bajarildi"&&vis(x)).sort((a,b)=>String(b.yaratildi).localeCompare(String(a.yaratildi)));
   const seen=seenGet();const sk=x=>x.id+"|"+(x.javobVaqti||"");const fresh=mine.filter(x=>!seen.has(sk(x)));
-  if(!panel.hidden&&fresh.length){for(const x of fresh)seen.add(sk(x));seenSet(seen)}
-  const nb=panel.hidden?fresh.length:0;badge.hidden=!nb;badge.textContent=nb>9?"9+":String(nb);
-  $("cj-fab").title=nb?"Claude "+nb+" ta yangi javob yozdi":"Claude yordamchi";
+  if(fresh.length)setTimeout(()=>{const sn=seenGet();for(const x of fresh)sn.add(sk(x));seenSet(sn)},8000);
   list.replaceChildren();
-  if(!mine.length&&!waiting.length)list.append(el("p","muted","Hozircha xabar yo'q. Yuqoriga yozing — Claude javobini shu yerga yozadi."));
+  if(!mine.length&&!waiting.length)return;
   for(const x of waiting.slice(0,8)){const d=el("div","cji");d.append(el("div","q",(x.kim?x.kim+": ":"")+x.matn),el("div","t","Claude javobini kutyapti…"));list.append(d)}
-  for(const x of mine.slice(0,20)){const d=el("div","cji"+(fresh.includes(x)?" new":""));
+  for(const x of mine.slice(0,6)){const d=el("div","cji"+(fresh.includes(x)?" new":""));
     if(x.natija==="xato")d.append(el("span","pill p-chiqim","Daftar noto'g'ri javob bergan"));
     d.append(el("div","q",(x.kim?x.kim+": ":"")+x.matn));{const a=el("div","a");renderAnswer(a,x.javob,{who:"Claude",icon:"headset",copy:false});d.append(a)}
     for(const m of (Array.isArray(x.muloqot)?x.muloqot:[])){if(m.claude){const a=el("div","a");renderAnswer(a,m.matn,{who:"Claude",icon:"headset",copy:false});d.append(a)}else d.append(el("div","q",(m.kim||"Siz")+": "+m.matn))}
@@ -1439,13 +1424,6 @@ function renderClaude(){
       catch(e){rb.disabled=false;showErr("Javobni yuborib bo'lmadi. Qayta urinib ko'ring.")}};
     d.append(ta,rr);list.append(d)}
 }
-function cjOpen(open){const p=$("cj-panel");p.hidden=!open;$("cj-fab").setAttribute("aria-expanded",String(open));if(open){renderClaude();$("cj-new").focus()}}
-$("cj-fab").onclick=()=>cjOpen($("cj-panel").hidden);
-$("cj-close").onclick=()=>cjOpen(false);
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("cj-panel").hidden)cjOpen(false)});
-$("cj-send").onclick=async()=>{const t=$("cj-new").value.trim();if(!t)return;$("cj-send").disabled=true;
-  const ok=await autoSorov(t,"Foydalanuvchi Claude'ga yozdi");$("cj-send").disabled=false;
-  $("cj-msg").textContent=ok?"Yuborildi. Claude javobini shu yerga yozadi.":"Yuborib bo'lmadi, qayta urinib ko'ring.";if(ok)$("cj-new").value=""};
 
 /* Claude summaries */
 async function aiRun(btn,box,task,list,extra){
@@ -1976,13 +1954,11 @@ render();
   sample=null;user=null;myId=null;
   // AI yordamchi: xabar `sorovlar`ga yoziladi, Claude har soat o'qib javob beradi va saqlaydi (Claude tugmasida ko'rinadi)
   const viaClaude=async(inputId,sabab,msgEl)=>{const t=$(inputId).value.trim();if(!t)return;const ok=await autoSorov(t,sabab);
-    if(ok){$(inputId).value="";cjOpen(true);if(msgEl)msgEl.textContent="Claude'ga yuborildi. Javobi bir soat ichida Claude oynasida chiqadi."}else showErr("Yuborib bo'lmadi, qayta urinib ko'ring.")};
+    if(ok){$(inputId).value="";if(msgEl)msgEl.textContent="Claude'ga yuborildi. Javobi bir daqiqa ichida Yordamchi ostida chiqadi.";const l=$("cj-list");if(l)l.scrollIntoView({behavior:"smooth",block:"nearest"})}else showErr("Yuborib bo'lmadi, qayta urinib ko'ring.")};
   $("send").onclick=()=>viaClaude("msg","Yordamchi (sayt)");
   $("tg-send").onclick=()=>viaClaude("tg-msg","Telegram'dan kiritish (sayt)");
-  $("send").title="Claude bir soat ichida javob beradi";$("tg-send").title="Claude bir soat ichida ajratib saqlaydi";
-  const hint=document.querySelector(".assistant:not(.tgbox) .ahead small");if(hint)hint.textContent="Yozganingiz Claude'ga boradi, u bir soat ichida javob beradi yoki daftarga saqlaydi. Javob Claude tugmasida ko'rinadi.";
+  $("send").title="Claude bir daqiqa ichida javob beradi";$("tg-send").title="Claude bir daqiqa ichida ajratib saqlaydi";
   for(const id of ["s-ai","r-ai","f-ai"]){const el=$(id);if(el)el.hidden=true}
-  const cjs=document.querySelector(".cj-head small");if(cjs)cjs.textContent="Har soat tekshirib javob beradi";
   db.collection("arxiv").limit(1000).onSnapshot(snap=>{arcDocs=snap.docs.map(x=>({id:x.id,...x.data()}));arcRecs=[];for(const d of arcDocs)for(const y of (Array.isArray(d.yozuvlar)?d.yozuvlar:[]))if(y&&y.id)arcRecs.push({...y,_arxiv:d.id});arcLoaded=true;mergeRecords()},()=>{arcLoaded=true;mergeRecords()});
   db.collection("yozuvlar").orderBy("sana","desc").limit(1000).onSnapshot(snap=>{liveRecs=snap.docs.map(x=>({id:x.id,...x.data()}));liveLoaded=true;mergeRecords()},()=>showErr("Daftar bilan aloqa uzildi. Sahifani qayta yuklang."));
   db.collection("xodimlar").limit(500).onSnapshot(snap=>{xodimlar=snap.docs.map(x=>({id:x.id,...x.data()})).filter(x=>x.login);xodimLoaded=true;applyAuth()},()=>{xodimLoaded=true;applyAuth()});
