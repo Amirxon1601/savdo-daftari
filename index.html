@@ -142,7 +142,7 @@ select,input[type=date],input[type=search],input[type=text],input[type=number],i
 .notice.miss{background:var(--warn-soft)}.notice.miss h3{color:var(--warn)}
 .notice ul{margin:0;padding-left:20px}
 .notice table{background:var(--surface);border-radius:8px}
-.cjl{display:grid;gap:10px;margin-top:10px;max-height:520px;overflow-y:auto;padding:2px 2px 2px 0}.cjl:empty{display:none}.cm{display:grid;gap:4px;max-width:92%}.cm.me{justify-self:end}.cm .cb{border-radius:14px;padding:9px 13px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}.cm.me .cb{background:var(--lapis);color:#fff;border-bottom-right-radius:4px}.cm.ai .cb{background:var(--surface2);border:1px solid var(--line);border-bottom-left-radius:4px;white-space:normal}.cm .ct{font-size:11px;color:var(--muted);padding:0 6px}.cm.me .ct{text-align:right}.cm.wait .cb{color:var(--muted);font-style:italic}.cm .ans{background:transparent;border:0;padding:0;gap:8px}.cm .ans-x{font-size:14px;font-weight:600}.cjn{justify-self:center;font-size:12px}.cji{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:4px;background:var(--surface2)}.cji.new{border-color:var(--karta);background:var(--karta-soft)}.cji .q{font-size:13px;color:var(--muted)}.cji .a{white-space:pre-wrap}.cji .t{font-size:12px;color:var(--muted)}.cji .pill{justify-self:start}
+.cjl{display:grid;gap:10px;margin-top:10px;max-height:520px;overflow-y:auto;padding:2px 2px 2px 0}.cjl:empty{display:none}.cm{display:grid;gap:4px;max-width:92%}.cm.me{justify-self:end}.cm .cb{border-radius:14px;padding:9px 13px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}.cm.me .cb{background:var(--lapis);color:#fff;border-bottom-right-radius:4px}.cm.ai .cb{background:var(--surface2);border:1px solid var(--line);border-bottom-left-radius:4px;white-space:normal}.cm .ct{font-size:11px;color:var(--muted);padding:0 6px}.cm.me .ct{text-align:right}.cm.wait .cb{color:var(--muted);font-style:italic}.cm .ans{background:transparent;border:0;padding:0;gap:8px}.cm .ans-x{font-size:14px;font-weight:600}.cjn{justify-self:center;font-size:12px}.cm{position:relative}.cm .cr{position:absolute;top:2px;font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:2px 7px;cursor:pointer;opacity:0;transition:opacity .15s}.cm.me .cr{left:-2px;transform:translateX(-100%)}.cm.ai .cr{right:-2px;transform:translateX(100%)}.cm:hover .cr,.cm:focus-within .cr{opacity:1}.cm .cq{font-size:12px;color:var(--muted);border-left:3px solid var(--line2);padding:2px 8px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cm.me .cq{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.5)}.cjr{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);border-left:3px solid var(--lapis);padding:4px 10px;margin-bottom:6px;background:var(--surface2);border-radius:0 8px 8px 0}.cjr .lb{font-weight:600;color:var(--lapis)}.cjr #cj-reply-t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#cj-last{max-height:none}#cj-last .cm{max-width:100%}.cji{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:4px;background:var(--surface2)}.cji.new{border-color:var(--karta);background:var(--karta-soft)}.cji .q{font-size:13px;color:var(--muted)}.cji .a{white-space:pre-wrap}.cji .t{font-size:12px;color:var(--muted)}.cji .pill{justify-self:start}
 .warnline{color:var(--warn);font-weight:600;margin:0;font-size:14px}
 
 /* ---------- alerts */
@@ -419,14 +419,17 @@ th{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
 
   <section class="assistant" aria-label="Yordamchi">
     <div class="ahead"><span class="ico"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg></span><div><label for="msg">Yordamchi</label><small>Savdo, to'lov, rasxod yoki savolni oddiy so'z bilan yozing — javob shu yerda chiqadi. Javobga qo'shimcha savol bo'lsa, shu maydonga yozavering.</small></div></div>
+    <div id="cj-reply" class="cjr" hidden><span class="lb">Javob:</span><span id="cj-reply-t"></span><button id="cj-reply-x" class="link" title="Bekor qilish">✕</button></div>
     <textarea id="msg" rows="2" placeholder="Masalan: Umar bugun 5 ta iZikr Black 12 oldi, 30$ dan"></textarea>
     <div class="row">
       <div class="exs" aria-label="Namunalar"><button class="ex">Umar 200$ naqd berdi</button><button class="ex">50 ta Gold 10 keldi, 18$ dan</button><button class="ex">Gold 10 yo'l kirasiga 40$ naqd</button><button class="ex">Bugun qancha sotdik?</button></div>
       <button id="stop" hidden><svg class="ic" aria-hidden="true"><use href="#i-stop"/></svg>To'xtatish</button>
+      <button id="cj-hist" title="Suhbat tarixi" aria-expanded="false"><svg class="ic" aria-hidden="true"><use href="#i-headset"/></svg><span id="cj-hist-n">Tarix</span></button>
       <button id="send" class="primary"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Yuborish</button>
     </div>
     <div class="out" id="out" hidden></div>
-    <div id="cj-list" class="cjl"></div>
+    <div id="cj-last" class="cjl"></div>
+    <div id="cj-list" class="cjl" hidden></div>
   </section>
 
   <!-- SAVDO -->
@@ -1399,36 +1402,51 @@ function renderSorovlar(){
 }
 function seenGet(){try{return new Set(JSON.parse(localStorage.getItem("cj-seen")||"[]"))}catch(e){return new Set()}}
 function seenSet(ids){try{localStorage.setItem("cj-seen",JSON.stringify([...ids].slice(-500)))}catch(e){}}
+let cjReply=null,cjOpenHist=false;
+function cjMine(){const vis=x=>!isIshchi()||x.kimId===meId();
+  return sorovlar.filter(x=>vis(x)&&x.sabab!=="Telegram'dan kiritish (sayt)").sort((a,b)=>String(a.yaratildi).localeCompare(String(b.yaratildi)))}
+function aiBody(c,v){if(v&&typeof v==="object")renderAnswer(c,v,{copy:false});else{c.style.whiteSpace="pre-wrap";c.textContent=String(v||"")}}
+function cjSetReply(r){cjReply=r;const box=$("cj-reply");if(!box)return;box.hidden=!r;if(r){$("cj-reply-t").textContent=(r.kim?r.kim+": ":"")+r.matn;$("msg").focus()}}
 function renderClaude(){
-  const list=$("cj-list");if(!list)return;
-  const vis=x=>!isIshchi()||x.kimId===meId();
-  const mine=sorovlar.filter(x=>vis(x)&&x.sabab!=="Telegram'dan kiritish (sayt)").sort((a,b)=>String(a.yaratildi).localeCompare(String(b.yaratildi))).slice(-8);
-  const atBottom=list.scrollHeight-list.scrollTop-list.clientHeight<40;
-  list.replaceChildren();
-  const bubble=(who,body,t)=>{const d=el("div","cm "+who);const c=el("div","cb");if(typeof body==="string")c.textContent=body;else body(c);d.append(c);if(t)d.append(el("div","ct",t));return d};
+  const list=$("cj-list"),last=$("cj-last");if(!list||!last)return;
+  const mine=cjMine();
   const tm=v=>{v=String(v||"");return v?fmtDate(v.slice(0,10))+" "+(new Date(v).toTimeString().slice(0,5)):""};
-  for(const x of mine){
-    list.append(bubble("me",x.matn||"",(x.kim?x.kim+" · ":"")+tm(x.yaratildi)));
-    if(x.javob)list.append(bubble("ai",c=>renderAnswer(c,x.javob,{copy:false}),tm(x.javobVaqti)));
+  const bubble=(who,body,t,ref,quote)=>{const d=el("div","cm "+who);
+    if(quote){const q=el("div","cq","↩ "+quote);d.append(q)}
+    const c=el("div","cb");if(typeof body==="string")c.textContent=body;else body(c);d.append(c);if(t)d.append(el("div","ct",t));
+    if(ref){const r=el("button","cr","Javob berish");r.onclick=()=>cjSetReply(ref);d.append(r)}return d};
+  const thread=x=>{const out=[];const txt=v=>typeof v==="string"?v:(v&&v.xulosa)||(v&&v.javob)||"";
+    out.push(bubble("me",x.matn||"",(x.kim?x.kim+" · ":"")+tm(x.yaratildi),{id:x.id,kim:x.kim,matn:x.matn||""}));
+    if(x.javob)out.push(bubble("ai",c=>aiBody(c,x.javob),tm(x.javobVaqti),{id:x.id,kim:"Claude",matn:txt(x.javob).slice(0,200)}));
     for(const m of (Array.isArray(x.muloqot)?x.muloqot:[])){
-      if(m.claude)list.append(bubble("ai",c=>renderAnswer(c,m.matn,{copy:false}),tm(m.vaqt)));
-      else list.append(bubble("me",m.matn||"",(m.kim?m.kim+" · ":"")+tm(m.vaqt)))}
-    const last=Array.isArray(x.muloqot)&&x.muloqot.length?x.muloqot[x.muloqot.length-1]:null;
-    if((!x.javob&&x.holat!=="bajarildi")||(last&&!last.claude))list.append(bubble("ai wait","Javob yozilmoqda…"));
-  }
-  if(mine.length){const n=el("button","link cjn","Yangi suhbat boshlash");n.onclick=()=>{cjFresh=true;$("msg").focus();n.textContent="Keyingi xabar yangi suhbat bo'ladi"};list.append(n)}
-  if(atBottom||list.dataset.first!=="1"){list.scrollTop=list.scrollHeight;list.dataset.first="1"}
+      if(m.claude)out.push(bubble("ai",c=>aiBody(c,m.matn),tm(m.vaqt),{id:x.id,kim:"Claude",matn:txt(m.matn).slice(0,200)}));
+      else out.push(bubble("me",m.matn||"",(m.kim?m.kim+" · ":"")+tm(m.vaqt),{id:x.id,kim:m.kim,matn:m.matn||""},m.javobGa))}
+    const lm=Array.isArray(x.muloqot)&&x.muloqot.length?x.muloqot[x.muloqot.length-1]:null;
+    if((!x.javob&&x.holat!=="bajarildi")||(lm&&!lm.claude))out.push(bubble("ai wait","Javob yozilmoqda…"));
+    return out};
+  /* oxirgi savol-javob (doim ko'rinadi) */
+  last.replaceChildren();
+  const lx=mine[mine.length-1];
+  if(lx&&!cjOpenHist){const t=thread(lx);let k=t.length-1;while(k>0&&!t[k].classList.contains("me"))k--;for(const d of t.slice(k))last.append(d)}
+  /* to'liq tarix (tugma bilan) */
+  const atBottom=list.scrollHeight-list.scrollTop-list.clientHeight<40;
+  list.replaceChildren();list.hidden=!cjOpenHist;
+  if(cjOpenHist){for(const x of mine.slice(-30))for(const d of thread(x))list.append(d);
+    if(atBottom||list.dataset.first!=="1"){list.scrollTop=list.scrollHeight;list.dataset.first="1"}}
+  const hb=$("cj-hist");if(hb){hb.setAttribute("aria-expanded",String(cjOpenHist));$("cj-hist-n").textContent=cjOpenHist?"Tarixni yopish":"Tarix"+(mine.length?" ("+mine.length+")":"");hb.hidden=!mine.length}
 }
 let cjFresh=false;
 /* Yordamchi: oxirgi suhbat 30 daqiqa ichida bo'lsa — davomi, aks holda yangi so'rov */
 async function sendYordamchi(t){
   const vis=x=>!isIshchi()||x.kimId===meId();
   const mine=sorovlar.filter(x=>vis(x)&&x.sabab!=="Telegram'dan kiritish (sayt)").sort((a,b)=>String(a.yaratildi).localeCompare(String(b.yaratildi)));
-  const x=mine[mine.length-1];
+  let x=mine[mine.length-1],quote=null;
+  if(cjReply){x=sorovlar.find(k=>k.id===cjReply.id)||x;quote=((cjReply.kim?cjReply.kim+": ":"")+cjReply.matn).slice(0,200)}
   const lastT=x?Math.max(...[x.yaratildi,x.javobVaqti,x.yangilandi].filter(Boolean).map(v=>+new Date(v))):0;
-  const cont=x&&!cjFresh&&x.javob&&Date.now()-lastT<30*60*1000;
-  cjFresh=false;
-  if(cont){const mq=(Array.isArray(x.muloqot)?x.muloqot:[]).concat([{kim:me?me.ism:"",kimId:meId(),matn:t.slice(0,4000),vaqt:new Date().toISOString()}]);
+  const cont=x&&(quote||(!cjFresh&&x.javob&&Date.now()-lastT<30*60*1000));
+  cjFresh=false;cjSetReply(null);
+  if(cont){const m={kim:me?me.ism:"",kimId:meId(),matn:t.slice(0,4000),vaqt:new Date().toISOString()};if(quote)m.javobGa=quote;
+    const mq=(Array.isArray(x.muloqot)?x.muloqot:[]).concat([m]);
     await db.collection("sorovlar").doc(x.id).update({muloqot:mq,holat:"yangi",javobKutilmoqda:true,yangilandi:new Date().toISOString()});return true}
   return autoSorov(t,"Yordamchi (sayt)");
 }
@@ -1965,6 +1983,8 @@ render();
     try{ok=inputId==="msg"?await sendYordamchi(t):await autoSorov(t,sabab)}catch(e){ok=false}
     if(ok){$(inputId).value="";$("out").hidden=true;if(msgEl)msgEl.textContent="Yuborildi. Javobi Yordamchi ostida chiqadi."}else showErr("Yuborib bo'lmadi, qayta urinib ko'ring.")};
   $("send").onclick=()=>viaClaude("msg","Yordamchi (sayt)");
+  $("cj-hist").onclick=()=>{cjOpenHist=!cjOpenHist;renderClaude();if(cjOpenHist)$("cj-list").scrollIntoView({behavior:"smooth",block:"nearest"})};
+  $("cj-reply-x").onclick=()=>cjSetReply(null);
   $("tg-send").onclick=()=>viaClaude("tg-msg","Telegram'dan kiritish (sayt)");
   $("send").title="Javob shu yerda chiqadi";$("tg-send").title="Ajratib daftarga saqlaydi";
   for(const id of ["s-ai","r-ai","f-ai"]){const el=$(id);if(el)el.hidden=true}
