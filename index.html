@@ -447,6 +447,7 @@ tbody tr:hover td{background:#faf6ec}
 
 /* ombor: Jami / Ofisda / Choshtepa */
 .p-kochirish{background:var(--lapis-soft);color:var(--lapis)}
+.p-tuzatish{background:#f3e8ff;color:#6b2fa3}
 .seg.oview{display:flex;width:max-content;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;margin:2px 0 4px}
 .seg.oview button{padding:9px 18px;font-size:14px;font-weight:600;min-height:40px;border-radius:10px}
 .seg.oview button[aria-pressed="true"]{background:var(--hero);color:#fff;box-shadow:none}
@@ -938,8 +939,8 @@ document.body.classList.add("pending");
 let xodimlar=[],me=null,xodimLoaded=false;
 let db=null,sample=null,records=[],products={},ctl=null,pending=null,pendingDel=null,draft=null,confirmId=null,selClient=null,tab="savdo";
 let user=null,downloads=null,myId=null,names={},settings={kurs:null,low:5},clients={},tgPending=null,tgCtl=null,selPeriod="hafta",nameReq="";
-const TUR={savdo:"Savdo",tolov:"Kirim",chiqim:"Rasxod",eslatma:"Eslatma",prixod:"Prixod",sanoq:"Sanoq",vozvrat:"Vozvrat",brak:"Brak",otkazma:"O'tkazma",kochirish:"Ko'chirish"};
-const TAB_OF={savdo:"savdo",tolov:"kassa",chiqim:"rasxod",eslatma:"eslatma",prixod:"prixod",sanoq:"ombor",vozvrat:"ombor",brak:"ombor",otkazma:"kassa",kochirish:"ombor"};
+const TUR={savdo:"Savdo",tolov:"Kirim",chiqim:"Rasxod",eslatma:"Eslatma",prixod:"Prixod",sanoq:"Sanoq",vozvrat:"Vozvrat",brak:"Brak",otkazma:"O'tkazma",kochirish:"Ko'chirish",tuzatish:"Qarz tuzatish"};
+const TAB_OF={savdo:"savdo",tolov:"kassa",chiqim:"rasxod",eslatma:"eslatma",prixod:"prixod",sanoq:"ombor",vozvrat:"ombor",brak:"ombor",otkazma:"kassa",kochirish:"ombor",tuzatish:"mijoz"};
 /* omborlar: ofis (savdo shu yerdan) va Choshtepa sklad */
 const JOY={ofis:"Ofis",choshtepa:"Choshtepa"};
 function joyOf(r){return r&&r.joy==="choshtepa"?"choshtepa":"ofis"}
@@ -957,6 +958,7 @@ function grpId(v){if(v==null)return null;const t=String(v).toLowerCase().replace
   if(/joyna|jayna|жойна|namoz|намоз/.test(t))return"joynamoz";if(/tasb|тасб|mayda|майда/.test(t))return"tasbeh";if(/umum|умум|general/.test(t))return"umumiy";return null}
 function prodGroup(n){const p=n&&products[n];return p&&GID.has(p.guruh)?p.guruh:null}
 function grpOf(r){
+  if(r.tur==="tuzatish")return GID.has(r.guruh)?r.guruh:null;
   if(r.tur==="tolov"||r.tur==="otkazma")return KID.has(r.guruh)?r.guruh:null;
   if(r.tur==="chiqim")return KID.has(r.guruh)?r.guruh:(prodGroup(r.mahsulot)||null);
   if(r.tur==="eslatma")return KID.has(r.guruh)?r.guruh:null;
@@ -984,7 +986,7 @@ function ic(n){const s=document.createElementNS(SVGNS,"svg");s.setAttribute("cla
 function ibtn(n,text,cls){const b=el("button",cls||null);b.append(ic(n),text);return b}
 const USUL={naqd:"Naqd",karta:"Karta"};
 const KATEG=["Tovar xaridi","Yo'l kira","Ijara","Maosh","Transport","Kommunal","Soliq","Qadoqlash","Boshqa"];
-const TYPES=["savdo","tolov","chiqim","eslatma","prixod","sanoq","vozvrat","brak","otkazma","kochirish"];
+const TYPES=["savdo","tolov","chiqim","eslatma","prixod","sanoq","vozvrat","brak","otkazma","kochirish","tuzatish"];
 const DEL_WORD=/o['‘’`ʻ]?ch?i?r|[ўу]ч(и)?р|оч(и)?р|удал|delete|remove|tozala|тозала|yo['‘’`ʻ]?q qil|olib tashla|сотр|стер/i;
 function lowN(){const v=Number(settings.low);return settings.low==null||settings.low===""||isNaN(v)?5:v}
 function kurs(){const v=Number(settings.kurs);return v>0?v:null}
@@ -1002,6 +1004,10 @@ function money(v,c){if(v==null||v===""||isNaN(v))return "";const n0=Number(v),ne
 function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 function sums(list,f="summa"){const o={};for(const r of list){const c=r.valyuta||"USD";o[c]=(o[c]||0)+(Number(r[f])||0)}return o}
 function diff(a,b){const o={...a};for(const c in b)o[c]=(o[c]||0)-b[c];return o}
+function plus(a,b){const o={...a};for(const c in b)o[c]=(o[c]||0)+b[c];return o}
+/* mijoz qarzi = savdo − vozvrat − tolov + tuzatish (tuzatish summasi ishorali) */
+function debtOf(s,v,t,z){return plus(diff(diff(s,v),t),z||{})}
+function tuzText(r){const v=Number(r.summa)||0;return"Qarzni to'g'rilash: "+(v>=0?"+":"−")+money(Math.abs(v),r.valyuta||"USD")}
 function mm(o){const k=Object.keys(o).filter(c=>Math.abs(o[c])>0.0049);if(!k.length)return money(0,"USD");const s=k.map(c=>money(o[c],c)).join(" + ");
   return k.includes("UZS")&&kurs()?s+" (≈ "+money(usd(o),"USD")+")":s}
 function pos(o){return Object.values(o).some(v=>v>0.0049)}
@@ -1115,10 +1121,10 @@ let rsT=null;window.addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTime
 
 /* render */
 function render(){
-  const sav=by("savdo"),tol=by("tolov"),chq=by("chiqim"),voz=by("vozvrat");
+  const sav=by("savdo"),tol=by("tolov"),chq=by("chiqim"),voz=by("vozvrat"),tuz=by("tuzatish");
   const plist=allProducts();
   $("plist").replaceChildren(...plist.map(n=>{const o=el("option");o.value=n;return o}));
-  $("clist").replaceChildren(...uniq([...sav,...tol,...voz],"mijoz").map(n=>{const o=el("option");o.value=n;return o}));
+  $("clist").replaceChildren(...uniq([...sav,...tol,...voz,...tuz],"mijoz").map(n=>{const o=el("option");o.value=n;return o}));
   $("n-savdo").textContent=sav.length;$("n-mijoz").textContent=uniq([...sav,...tol],"mijoz").length;$("n-ombor").textContent=plist.length;$("n-prixod").textContent=by("prixod").length;
   $("n-kassa").textContent=tol.length+chq.length;$("n-rasxod").textContent=chq.length;$("n-foyda").textContent="";$("n-eslatma").textContent=by("eslatma").length;
   const g=$("glance");g.replaceChildren();
@@ -1126,7 +1132,7 @@ function render(){
   const chip=(cls,l,v)=>{const c=el("div","chip "+cls);const i=el("span","ico");i.append(ic(CHIPIC[cls]||"wallet"));c.append(i,el("span",null,l),el("b",null,v));g.append(c)};
   const u=(list,x)=>sums(list.filter(r=>r.usul===x));
   const G=selGroup||undefined;chip("naqd",selGroup?gNom(selGroup)+": naqd":"Naqd",mm(bal(records,"naqd",G)));chip("karta",selGroup?gNom(selGroup)+": karta":"Karta",mm(bal(records,"karta",G)));
-  chip("qarz","Mijozlar qarzi",mm(diff(diff(sums(sav),sums(voz)),sums(tol))));
+  chip("qarz","Mijozlar qarzi",mm(debtOf(sums(sav),sums(voz),sums(tol),sums(tuz))));
   const pf=profit(()=>true);if(!isIshchi())chip("foyda","Sof foyda",pf.miss.length?"tannarx kerak":money(pf.net,"USD"));
   if(kurs())chip("kurs","Dollar kursi","1$ = "+Number(kurs()).toLocaleString("ru-RU").replace(/\s/g," ")+" so'm");
   renderSavdo();renderMijoz();renderOmbor();renderPrixod();renderKassa();renderRasxod();renderFoyda();renderEslatma();
@@ -1154,10 +1160,10 @@ function renderSavdo(){
 function savdoFiltered(){const m=$("s-m").value,p=$("s-p").value,q=$("s-q").value.trim().toLowerCase();return by("savdo").filter(r=>(!m||r.mijoz===m)&&(!p||r.mahsulot===p)&&inRange(r,"s")&&has(r,q,["mijoz","mahsulot","izoh"]))}
 
 function clientStats(){
-  const m=new Map();const get=n=>{if(!m.has(n))m.set(n,{name:n,sav:[],tol:[],voz:[],esl:[]});return m.get(n)};
-  for(const r of records){if(!r.mijoz)continue;if(r.tur==="savdo")get(r.mijoz).sav.push(r);else if(r.tur==="tolov")get(r.mijoz).tol.push(r);else if(r.tur==="vozvrat")get(r.mijoz).voz.push(r)}
+  const m=new Map();const get=n=>{if(!m.has(n))m.set(n,{name:n,sav:[],tol:[],voz:[],tuz:[],esl:[]});return m.get(n)};
+  for(const r of records){if(!r.mijoz)continue;if(r.tur==="savdo")get(r.mijoz).sav.push(r);else if(r.tur==="tolov")get(r.mijoz).tol.push(r);else if(r.tur==="vozvrat")get(r.mijoz).voz.push(r);else if(r.tur==="tuzatish")get(r.mijoz).tuz.push(r)}
   for(const r of records)if(r.tur==="eslatma"&&r.mijoz&&m.has(r.mijoz))m.get(r.mijoz).esl.push(r);
-  return[...m.values()].map(c=>{const s=sums(c.sav),v=sums(c.voz),t=sums(c.tol);return{...c,s,v,t,q:diff(diff(s,v),t),last:c.sav.map(r=>r.sana).sort().pop()||"",orders:new Set(c.sav.map(r=>r.sana)).size,dona:c.sav.reduce((a,r)=>a+(Number(r.soni)||0),0)}});
+  return[...m.values()].map(c=>{const s=sums(c.sav),v=sums(c.voz),t=sums(c.tol),z=sums(c.tuz);return{...c,s,v,t,z,q:debtOf(s,v,t,z),last:c.sav.map(r=>r.sana).sort().pop()||"",orders:new Set(c.sav.map(r=>r.sana)).size,dona:c.sav.reduce((a,r)=>a+(Number(r.soni)||0),0)}});
 }
 function renderMijoz(){
   const all=clientStats();const q=$("m-q").value.trim().toLowerCase(),onlyDebt=$("m-debt").checked;
@@ -1174,14 +1180,14 @@ function renderMijoz(){
   const h=el("div","dh");h.append(el("h3",null,c.name));const bw=el("div","row");const ai=el("button",null,"Claude xulosasi");const cl=el("button",null,"Yopish");cl.onclick=()=>{selClient=null;render()};bw.append(ai,cl);h.append(bw);d.append(h);
   const k=el("div","kpis");k.id="m-dk";d.append(k);const aiout=el("div","aibox");aiout.hidden=true;d.append(aiout);
   const u=x=>sums(c.tol.filter(r=>r.usul===x));
-  const tl=[...c.sav,...c.voz,...c.tol,...c.esl].sort((a,b)=>key(b).localeCompare(key(a)));
+  const tl=[...c.sav,...c.voz,...c.tol,...c.tuz,...c.esl].sort((a,b)=>key(b).localeCompare(key(a)));
   const sc=el("div","scroll");const t=el("table");t.innerHTML='<thead><tr><th>Sana</th><th>Turi</th><th>Tafsilot</th><th class="num">Soni</th><th class="num">Narxi</th><th class="num">Summa</th></tr></thead>';
-  const tb2=el("tbody");for(const r of tl){const tr=el("tr");tr.append(el("td","date",fmtDate(r.sana)),typeCell(r),(()=>{const td=el("td",null,[r.mahsulot,r.izoh].filter(Boolean).join(" — "));if(!selGroup)td.append(gtag(grpOf(r)));return td})(),el("td","num",r.soni!=null?String(r.soni):""),el("td","num",money(r.narx,r.valyuta)),el("td","num"+(r.tur==="tolov"?" pos":r.tur==="vozvrat"?" neg":""),money(r.summa,r.valyuta)));tb2.append(tr)}
+  const tb2=el("tbody");for(const r of tl){const tr=el("tr");tr.append(el("td","date",fmtDate(r.sana)),typeCell(r),(()=>{const td=el("td",null,r.tur==="tuzatish"?[tuzText(r),r.izoh].filter(Boolean).join(" — "):[r.mahsulot,r.izoh].filter(Boolean).join(" — "));if(!selGroup)td.append(gtag(grpOf(r)));return td})(),el("td","num",r.soni!=null?String(r.soni):""),el("td","num",money(r.narx,r.valyuta)),el("td","num"+(r.tur==="tolov"?" pos":r.tur==="vozvrat"?" neg":r.tur==="tuzatish"?(Number(r.summa)<0?" pos":" debt"):""),r.tur==="tuzatish"?(Number(r.summa)>=0?"+":"−")+money(Math.abs(Number(r.summa)||0),r.valyuta):money(r.summa,r.valyuta)));tb2.append(tr)}
   t.append(tb2);sc.append(t);d.append(sc);
-  kpis("m-dk",[["Olgan",mm(c.s),c.dona+" dona, "+c.orders+" ta xarid"],["Vozvrat",mm(c.v),c.voz.reduce((a,r)=>a+(Number(r.soni)||0),0)+" dona"],["Naqd to'lagan",mm(u("naqd")),null,"naqd"],["Kartaga to'lagan",mm(u("karta")),null,"karta"],["Qarz",mm(c.q),null,pos(c.q)?"warn":""]]);
+  kpis("m-dk",[["Olgan",mm(c.s),c.dona+" dona, "+c.orders+" ta xarid"],["Vozvrat",mm(c.v),c.voz.reduce((a,r)=>a+(Number(r.soni)||0),0)+" dona"],["Naqd to'lagan",mm(u("naqd")),null,"naqd"],["Kartaga to'lagan",mm(u("karta")),null,"karta"],...(c.tuz.length?[["Qarz tuzatish",(usd(c.z)>=0?"+":"")+mm(c.z),c.tuz.length+" ta to'g'rilash"]]:[]),["Qarz",mm(c.q),null,pos(c.q)?"warn":""]]);
   {const gd=clientGroupDebts(c.name);if(!selGroup&&gd.length&&(gd.length>1||gd[0].g)){const card=el("div");const h=el("h3");h.append(ic("box"),"Guruhlar bo'yicha");card.append(h);
-    const sc2=el("div","scroll");const t2=el("table");t2.innerHTML='<thead><tr><th>Guruh</th><th class="num">Olgan</th><th class="num">Vozvrat</th><th class="num">To\'lagan</th><th class="num">Qarz</th></tr></thead>';const b2=el("tbody");
-    for(const x of gd){const tr=el("tr");const g=el("td");g.append(gtag(x.g));tr.append(g,el("td","num",mm(x.s)),el("td","num",mm(x.v)),el("td","num",mm(x.t)),el("td","num"+(pos(x.q)?" debt":""),mm(x.q)));b2.append(tr)}
+    const sc2=el("div","scroll");const t2=el("table");const hz=gd.some(x=>Object.keys(x.z).length);t2.innerHTML='<thead><tr><th>Guruh</th><th class="num">Olgan</th><th class="num">Vozvrat</th><th class="num">To\'lagan</th>'+(hz?'<th class="num">Tuzatish</th>':'')+'<th class="num">Qarz</th></tr></thead>';const b2=el("tbody");
+    for(const x of gd){const tr=el("tr");const g=el("td");g.append(gtag(x.g));tr.append(g,el("td","num",mm(x.s)),el("td","num",mm(x.v)),el("td","num",mm(x.t)));if(hz)tr.append(el("td","num",Object.keys(x.z).length?(usd(x.z)>=0?"+":"")+mm(x.z):""));tr.append(el("td","num"+(pos(x.q)?" debt":""),mm(x.q)));b2.append(tr)}
     t2.append(b2);sc2.append(t2);card.append(sc2);card.style.display="grid";card.style.gap="8px";d.insertBefore(card,aiout)}}
   clientCard(d,c,sc);
   ai.onclick=()=>aiRun(ai,aiout,`Mijoz: ${c.name}. Uning xaridlari, vozvratlari, to'lovlari va eslatmalarini tahlil qil: nima olgan (mahsulot, soni, narx), qachon, nima qaytargan, qancha to'lagan (naqd/karta), qarzi qancha, xarid odati. Oxirida 1-2 ta tavsiya.`,tl);
@@ -1491,7 +1497,7 @@ Javob tuzish qoidalari: 2 va undan ko'p narsa raqam bilan sanalsa — matnga ema
 O'chirish buyrug'i bo'lsa:
 {"amal":"ochirish","idlar":["o'chiriladigan yozuvlarning id qiymatlari"],"hammasi":false,"turlar":[],"mahsulotlar":[],"javob":"nima o'chirilishini 1 gapda aytgan matn"}
 Agar TOVARNING O'ZINI (nomini) ombor/tovarlar ro'yxatidan o'chirish so'ralsa ("mahsulotni o'chir", "tovarni ro'yxatdan olib tashla", "ombordagi tovarlarni o'chir", qoldig'i 0 bo'lsa ham): "mahsulotlar" ga ombor ro'yxatidagi aniq nomlarni yoz ("idlar" bo'sh). Bu tovar va uning barcha yozuvlarini o'chiradi. "Ombordagi hamma tovarlarni o'chir" desa — ro'yxatdagi barcha nomlarni yoz. Hech qachon "buni o'chirib bo'lmaydi" dema.
-Agar foydalanuvchi HAMMA yozuvlarni (yoki bir turdagi hamma yozuvlarni: "hamma savdolarni", "barcha qarzlarni") o'chirishni so'rasa: "hammasi": true qil, "idlar" bo'sh qolsin. Faqat ma'lum turlar so'ralsa "turlar" ga ularni yoz (masalan ["savdo","tolov"]); qarz = savdo, tolov va vozvrat yozuvlari. Hamma narsa so'ralsa "turlar" bo'sh qolsin.
+Agar foydalanuvchi HAMMA yozuvlarni (yoki bir turdagi hamma yozuvlarni: "hamma savdolarni", "barcha qarzlarni") o'chirishni so'rasa: "hammasi": true qil, "idlar" bo'sh qolsin. Faqat ma'lum turlar so'ralsa "turlar" ga ularni yoz (masalan ["savdo","tolov"]); qarz = savdo, tolov, vozvrat va tuzatish yozuvlari. Hamma narsa so'ralsa "turlar" bo'sh qolsin.
 Daftar o'zi bajara olmaydigan ish so'ralsa (dizaynni yoki funksiyani o'zgartirish, yangi bo'lim qo'shish, xatoni tuzatish, Telegram yoki boshqa dasturga ulash va h.k.):
 {"amal":"sorov","javob":"buni daftar o'zi qila olmasligini va so'rov Claude'ga yuborilishi mumkinligini 1-2 gapda ayt"}
 
@@ -1507,6 +1513,7 @@ Omborlar: ikkita — "ofis" (savdo odatda shu yerdan) va "choshtepa" (Choshtepad
 - "tolov": mijoz BIZGA pul berdi — kirim (mijoz, summa, usul).
 - "chiqim": pul BIZDAN chiqdi — rasxod (summa, usul, kategoriya, izoh = nima uchun, mijoz = kimga). Agar rasxod aniq bir tovar uchun bo'lsa (masalan o'sha tovarning yo'l kirasi, qadoqlash, bojxona), mahsulot = o'sha tovar nomi; oddiy rasxodda mahsulot bo'sh.
 - "otkazma": kassalar orasida pul o'tkazish (guruh = qayerdan, guruh2 = qayerga, summa, usul).
+- "tuzatish": mijoz qarzini to'g'rilash, faqat qarzga ta'sir qiladi (savdo, tushum, kassa, omborga emas). mijoz, guruh (weslamic/iqibla/joynamoz/tasbeh) shart. "Falonchining iQIBLA qarzini 500$ qilib qo'y", "qarzi 500 bo'lsin" — maqsad qarz aytilsa "qarz_bolsin": 500 yoz, summa null qoldir (farqni dastur o'zi hisoblaydi). "qarziga 100$ qo'sh" — summa 100; "qarzidan 100$ ayir / kamaytir" (pul olinmagan holda) — summa -100. Mijoz pul bergan bo'lsa bu tuzatish emas, "tolov".
 - "eslatma": boshqa har qanday ma'lumot (izohga).
 
 ${GRTEXT()}
@@ -1521,7 +1528,7 @@ Qoidalar:
 - summa aytilmasa soni*narx. Valyuta aytilmasa "USD"; "so'm", "sum", "ming" bo'lsa "UZS".
 - Foydalanuvchi aytmagan har qanday qiymat (mijoz, mahsulot, soni, narx, tannarx, summa, usul) uchun null yoki bo'sh satr yoz. O'ylab topma va eski yozuvlardan OLMA.
 - Agar "Oldingi to'liq bo'lmagan xabar" berilgan bo'lsa va yangi xabar uni to'ldirsa, ikkalasini birlashtirib to'liq yozuv(lar) qaytar.
-- Foyda: tushum (savdo − vozvrat) − tannarx × sotilgan dona − tovar rasxodlari − brak (tannarx bo'yicha) − umumiy rasxodlar. Mijoz qarzi = savdo − vozvrat − tolov, har guruh bo'yicha alohida. Kassa qoldig'i har guruh kassasi bo'yicha: kirim − rasxod ± o'tkazmalar; naqd va karta alohida. Savolga javob berganda kerak bo'lsa guruhlar bo'yicha ajratib ayt.
+- Foyda: tushum (savdo − vozvrat) − tannarx × sotilgan dona − tovar rasxodlari − brak (tannarx bo'yicha) − umumiy rasxodlar. Mijoz qarzi = savdo − vozvrat − tolov + tuzatish (tuzatish summasi ishorali: musbat qarzni oshiradi, manfiy kamaytiradi), har guruh bo'yicha alohida. Tuzatish savdo, tushum, foyda, kassa va omborga kirmaydi. Kassa qoldig'i har guruh kassasi bo'yicha: kirim − rasxod ± o'tkazmalar; naqd va karta alohida. Savolga javob berganda kerak bo'lsa guruhlar bo'yicha ajratib ayt.
 ${isIshchi()?"- Bu foydalanuvchi ISHCHI. Unga tannarx, foyda, ombor qiymati va rasxodlar foydasi haqida hech qanday raqam aytma. Shunday savol bo'lsa: \"Bu ma'lumot faqat rahbarga ko'rinadi.\" deb javob ber.\n":""}- Javob o'zbek tilida (lotin), aniq: sanalar (KK.OO.YYYY), mahsulot nomlari, soni, narxi, jami. Faqat daftardagi ma'lumotga asoslan. Markdown belgilarisiz (** yoki # ishlatma), oddiy qatorlar va "- " bilan yoz.
 
 ${draft?"Oldingi to'liq bo'lmagan xabar (saqlanmagan):\n"+draft+"\n\nFoydalanuvchining yangi xabari:":"Foydalanuvchi xabari:"}
@@ -1568,6 +1575,8 @@ function clean(y){
     guruh:(()=>{const g=grpId(y.guruh);return tur==="tolov"||["savdo","vozvrat","prixod","sanoq","brak","kochirish"].includes(tur)?(GID.has(g)?g:null):(KID.has(g)?g:null)})(),
     guruh2:tur==="otkazma"&&KID.has(grpId(y.guruh2))?grpId(y.guruh2):null};
   if(tur==="otkazma"){r.summa=summa;r.usul=["naqd","karta"].includes(y.usul)?y.usul:null;r.mahsulot="";r.mijoz=""}
+  if(tur==="tuzatish"){const g=grpId(y.guruh);r.guruh=GID.has(g)?g:null;r.mahsulot=null;r.soni=null;r.narx=null;r.tannarx=null;r.usul=null;r.kategoriya=null;r.brak=false;r.valyuta="USD";
+    const tg=num(y.qarz_bolsin);if(tg!=null&&r.mijoz&&r.guruh){const cur=usd((clientGroupDebts(r.mijoz).find(x=>x.g===r.guruh)||{q:{}}).q);r.summa=Math.round((tg-cur)*100)/100;r.izoh=(r.izoh?r.izoh+" · ":"")+gNom(r.guruh)+" qarzi "+money(tg,"USD")+" qilindi (oldin "+money(cur,"USD")+")"}else r.summa=summa}
   {const j=String(y.joy||"").toLowerCase().replace(/[^a-z]/g,"");const jj=j.startsWith("chosh")||j==="sklad"?"choshtepa":j==="ofis"||j==="office"?"ofis":null;
    if(tur==="kochirish")r.joy=jj||"choshtepa";else if(tur==="sanoq"){if(jj)r.joy=jj}else if(["prixod","savdo","brak"].includes(tur)&&jj==="choshtepa")r.joy="choshtepa"}
   if(!r.guruh2)delete r.guruh2;
@@ -1575,8 +1584,8 @@ function clean(y){
   return r;
 }
 function debtHint(name){if(!name)return"";const d=clientGroupDebts(name).filter(x=>pos(x.q));if(!d.length)return"";return". Uning qarzi: "+d.map(x=>gNom(x.g)+" "+mm(x.q)).join(", ")}
-function clientGroupDebts(name){return withAll(()=>{const m={};for(const r of allRecs){if(r.mijoz!==name||!["savdo","vozvrat","tolov"].includes(r.tur))continue;const g=grpOf(r)||"";(m[g]=m[g]||{g,s:[],v:[],t:[]});(r.tur==="savdo"?m[g].s:r.tur==="vozvrat"?m[g].v:m[g].t).push(r)}
-  return Object.values(m).map(x=>({g:x.g||null,s:sums(x.s),v:sums(x.v),t:sums(x.t),q:diff(diff(sums(x.s),sums(x.v)),sums(x.t))})).sort((a,b)=>usd(b.q)-usd(a.q))})}
+function clientGroupDebts(name){return withAll(()=>{const m={};for(const r of allRecs){if(r.mijoz!==name||!["savdo","vozvrat","tolov","tuzatish"].includes(r.tur))continue;const g=grpOf(r)||"";(m[g]=m[g]||{g,s:[],v:[],t:[],z:[]});(r.tur==="savdo"?m[g].s:r.tur==="vozvrat"?m[g].v:r.tur==="tuzatish"?m[g].z:m[g].t).push(r)}
+  return Object.values(m).map(x=>({g:x.g||null,s:sums(x.s),v:sums(x.v),t:sums(x.t),z:sums(x.z),q:debtOf(sums(x.s),sums(x.v),sums(x.t),sums(x.z))})).sort((a,b)=>usd(b.q)-usd(a.q))})}
 function missing(items){
   const out=[];
   items.forEach((y,i)=>{const w=[];const who=items.length>1?(y.mahsulot||(i+1)+"-yozuv"):"";
@@ -1588,6 +1597,7 @@ function missing(items){
     else if(y.tur==="vozvrat"){if(!y.mijoz)w.push("kim qaytarganini");if(!y.mahsulot)w.push("qaysi tovar ekanini");if(y.soni==null)w.push("nechta qaytarganini");
       if(y.narx==null&&y.mahsulot){const lp=lastPrice(y.mahsulot,y.mijoz);if(lp!=null){y.narx=lp;if(y.soni!=null)y.summa=lp*y.soni;y.izoh=(y.izoh?y.izoh+" · ":"")+"narx oxirgi savdodan olindi"}else w.push("qaytarish narxini")}}
     else if(y.tur==="brak"){if(!y.mahsulot)w.push("qaysi tovar ekanini");if(y.soni==null)w.push("nechta brak ekanini")}
+    else if(y.tur==="tuzatish"){if(!y.mijoz)w.push("qaysi mijoz ekanini");if(!y.guruh)w.push("qaysi guruh qarzi ekanini (Weslamic, iQIBLA, Joynamoz yoki Mayda tasbehlar)"+debtHint(y.mijoz));if(y.summa==null||!Number(y.summa))w.push("qarzni qanchaga o'zgartirish kerakligini")}
     const GN="Weslamic, iQIBLA, Joynamoz yoki Mayda tasbehlar";
     if(["savdo","vozvrat","prixod","sanoq","brak"].includes(y.tur)&&y.mahsulot&&!prodGroup(y.mahsulot)&&!y.guruh)w.push(y.mahsulot+" qaysi guruhga tegishli ekanini ("+GN+")");
     else if(y.tur==="tolov"&&!y.guruh)w.push("qaysi guruh uchun to'laganini ("+GN+")"+debtHint(y.mijoz));
@@ -1606,8 +1616,8 @@ function showMissing(miss){
 }
 function previewTable(items){
   const sc=el("div","scroll");const t=el("table");const tb=el("tbody");
-  for(const y of items){const tr=el("tr");tr.append(el("td","date",fmtDate(y.sana)),typeCell(y),el("td",null,y.mijoz||""),el("td",null,[y.mahsulot,y.izoh].filter(Boolean).join(" — ")),
-    el("td","num",y.soni!=null?y.soni+" dona":""),el("td","num",y.tannarx!=null?"tannarx "+money(y.tannarx,y.valyuta):money(y.narx,y.valyuta)),el("td","num",money(y.summa,y.valyuta)));tb.append(tr)}
+  for(const y of items){const tr=el("tr");tr.append(el("td","date",fmtDate(y.sana)),typeCell(y),el("td",null,y.mijoz||""),el("td",null,y.tur==="tuzatish"?[gNom(y.guruh),tuzText(y),y.izoh].filter(Boolean).join(" — "):[y.mahsulot,y.izoh].filter(Boolean).join(" — ")),
+    el("td","num",y.soni!=null?y.soni+" dona":""),el("td","num",y.tannarx!=null?"tannarx "+money(y.tannarx,y.valyuta):money(y.narx,y.valyuta)),el("td","num",y.tur==="tuzatish"?(Number(y.summa)>=0?"+":"−")+money(Math.abs(Number(y.summa)||0),y.valyuta):money(y.summa,y.valyuta)));tb.append(tr)}
   t.append(tb);sc.append(t);return sc}
 function stockWarnings(items){const w=[];const need={};for(const y of items)if(y.tur==="savdo"&&y.mahsulot)need[y.mahsulot]=(need[y.mahsulot]||0)+(y.soni||0);
   for(const n in need){const s=stock(n).qoldiq;if(need[n]>s)w.push(n+": omborda "+s+" dona bor, siz "+need[n]+" dona sotyapsiz")}return w}
@@ -1867,9 +1877,9 @@ async function receipt(c,date,msgEl){
 /* kunlik hisobot */
 function dayReport(date){
   const on=r=>r.sana===date;
-  const sav=by("savdo").filter(on),tol=by("tolov").filter(on),chq=by("chiqim").filter(on),voz=by("vozvrat").filter(on),prx=by("prixod").filter(on);
+  const sav=by("savdo").filter(on),tol=by("tolov").filter(on),chq=by("chiqim").filter(on),voz=by("vozvrat").filter(on),prx=by("prixod").filter(on),tuz=by("tuzatish").filter(on);
   const u=(l,x)=>sums(l.filter(r=>r.usul===x));
-  const nd=diff(diff(sums(sav),sums(voz)),sums(tol));
+  const nd=debtOf(sums(sav),sums(voz),sums(tol),sums(tuz));
   const prod={};for(const r of sav){const k=r.mahsulot||"?";prod[k]=(prod[k]||0)+(Number(r.soni)||0)}
   const topP=Object.entries(prod).sort((a,b)=>b[1]-a[1]);
   const sel={};for(const r of sav){const k=whoName(r);(sel[k]=sel[k]||[]).push(r)}
@@ -1882,6 +1892,7 @@ function dayReport(date){
   L.push("💵 Tushum: naqd "+mm(u(tol,"naqd"))+", karta "+mm(u(tol,"karta"))+(noU.length?", usuli noma'lum "+mm(sums(noU)):""));
   if(chq.length)L.push("💸 Rasxod: "+mm(sums(chq))+" ("+[...new Set(chq.map(r=>r.kategoriya||"Boshqa"))].join(", ")+")");
   if(prx.length)L.push("📦 Prixod: "+prx.map(r=>r.mahsulot+" "+r.soni+" dona").join(", "));
+  if(tuz.length)L.push("✏️ Qarz to'g'rilandi: "+tuz.map(r=>r.mijoz+" "+(Number(r.summa)>=0?"+":"−")+money(Math.abs(Number(r.summa)||0),r.valyuta)).join(", "));
   L.push(usd(nd)>=0?"📒 Bugun qo'shilgan qarz: "+mm(nd):"📒 Bugun qarz kamaydi: "+mm(neg(nd)));
   L.push("📒 Jami mijozlar qarzi: "+mm(allDebt));
   if(!selGroup){const gs=GR.map(g=>[g,sums(sav.filter(r=>grpOf(r)===g.id)),sums(tol.filter(r=>grpOf(r)===g.id))]).filter(x=>usd(x[1])||usd(x[2]));
@@ -1954,8 +1965,8 @@ function sheets(){
   const R=(list,cols)=>[cols.map(c=>c[0]),...[...list].sort((a,b)=>key(a).localeCompare(key(b))).map(r=>cols.map(c=>{const v=c[1](r);return v==null?"":v}))];
   return{
     "Savdo":R(by("savdo"),[["Sana",r=>r.sana],["Mijoz",r=>r.mijoz],["Mahsulot",r=>r.mahsulot],["Guruh",r=>gNom(grpOf(r))],["Soni",r=>n(r.soni)],["Narxi",r=>n(r.narx)],["Summa",r=>n(r.summa)],["Valyuta",r=>r.valyuta],["Kim",who],["Izoh",r=>r.izoh]]),
-    "Mijozlar":[["Mijoz","Telefon","Manzil","Xaridlar","Savdo $","Savdo so'm","Vozvrat $","To'lagan $","To'lagan so'm","Qarz $","Qarz so'm","Qarz muddati","Izoh"],
-      ...clientStats().sort((a,b)=>usd(b.q)-usd(a.q)).map(c=>{const ci=cinfo(c.name);return[c.name,ci.telefon||"",ci.manzil||"",c.orders,c.s.USD||0,c.s.UZS||0,c.v.USD||0,c.t.USD||0,c.t.UZS||0,c.q.USD||0,c.q.UZS||0,ci.muddat||"",ci.izoh||""]})],
+    "Mijozlar":[["Mijoz","Telefon","Manzil","Xaridlar","Savdo $","Savdo so'm","Vozvrat $","To'lagan $","To'lagan so'm","Qarz tuzatish $","Qarz $","Qarz so'm","Qarz muddati","Izoh"],
+      ...clientStats().sort((a,b)=>usd(b.q)-usd(a.q)).map(c=>{const ci=cinfo(c.name);return[c.name,ci.telefon||"",ci.manzil||"",c.orders,c.s.USD||0,c.s.UZS||0,c.v.USD||0,c.t.USD||0,c.t.UZS||0,c.z.USD||0,c.q.USD||0,c.q.UZS||0,ci.muddat||"",ci.izoh||""]})],
     "Ombor":[["Mahsulot","Guruh","Qoldiq","Brak","Sotilgan","Tannarx $","Ombor qiymati $"],...allProducts().map(p=>{const s=stock(p),c=cost(p);return[p,gNom(prodGroup(p)),s.qoldiq,s.brak,s.sold,c??"",c!=null&&s.qoldiq>0?s.qoldiq*c:""]})],
     "Prixod":R(by("prixod"),[["Sana",r=>r.sana],["Kimdan",r=>r.mijoz],["Mahsulot",r=>r.mahsulot],["Soni",r=>n(r.soni)],["Tannarx",r=>n(r.tannarx)],["Summa",r=>(Number(r.soni)||0)*(Number(r.tannarx)||0)],["Izoh",r=>r.izoh]]),
     "Kassa":R(records.filter(r=>r.tur==="tolov"||r.tur==="chiqim"||r.tur==="otkazma"),[["Sana",r=>r.sana],["Harakat",r=>r.tur==="tolov"?"Kirim":r.tur==="otkazma"?"O'tkazma":"Chiqim"],["Kassa",r=>r.tur==="otkazma"?gNom(r.guruh)+" → "+gNom(r.guruh2):gNom(grpOf(r))],["Kimdan / kimga",r=>r.mijoz],["Usul",r=>USUL[r.usul]||""],["Summa",r=>n(r.summa)],["Valyuta",r=>r.valyuta],["Kategoriya",r=>r.kategoriya||""],["Izoh",r=>r.izoh]]),
@@ -1999,7 +2010,7 @@ ${GRTEXT()}
 Faqat bitta JSON qaytar, boshqa matn yozma:
 {"yozuvlar":[{"tur":"savdo","sana":"YYYY-MM-DD","mijoz":"...","mahsulot":"...","soni":5,"narx":30,"summa":150,"valyuta":"USD","usul":null,"kategoriya":null,"tannarx":null,"brak":false,"izoh":"","guruh":null,"guruh2":null,"joy":null,"sotuvchi":"xabarni yozgan odam","manba":"asl xabarning qisqa matni"}]}
 
-Turlar: "savdo" (mijoz tovar oldi), "tolov" (mijoz bizga pul berdi), "chiqim" (bizdan pul chiqdi; kategoriya: ${KATEG.join(", ")}), "prixod" (bizga tovar keldi; tannarx = 1 dona asl narxi), "vozvrat" (mijoz qaytardi; brak = true agar nosoz bo'lsa), "brak", "sanoq", "otkazma" (kassalar orasida pul o'tkazish), "eslatma".
+Turlar: "savdo" (mijoz tovar oldi), "tolov" (mijoz bizga pul berdi), "chiqim" (bizdan pul chiqdi; kategoriya: ${KATEG.join(", ")}), "prixod" (bizga tovar keldi; tannarx = 1 dona asl narxi), "vozvrat" (mijoz qaytardi; brak = true agar nosoz bo'lsa), "tuzatish" (mijoz qarzini to'g'rilash: summa ishorali, faqat qarzga ta'sir qiladi; maqsad qarz aytilsa qarz_bolsin), "brak", "sanoq", "otkazma" (kassalar orasida pul o'tkazish), "eslatma".
 Qoidalar:
 - Savdoda "qarzga", "nasiya", "keyin beradi" desa — faqat savdo yozuvi (to'lov yozuvi qilinmaydi).
 - Savdo bilan birga pul berilgani aytilsa ("naqd berdi", "naqd to'ladi", "kartaga tashladi", "perevod qildi") — savdodan tashqari alohida "tolov" yozuvi ham qil: mijoz o'sha, summa = to'langan pul (aytilmasa savdo summasi), usul "naqd" yoki "karta".
@@ -2225,8 +2236,8 @@ const EF={sana:["Sana","date"],mijoz:["Mijoz","text","clist"],mahsulot:["Mahsulo
   kategoriya:["Kategoriya","select",KATEG.map(k=>[k,k])],guruh:["Guruh / kassa","grp"],guruh2:["Qayerga (kassa)","grp"],tannarx:["Tannarx (1 dona), $","number"],brak:["Brak (nosoz)","check"],izoh:["Izoh","text"]};
 const EBY={savdo:["sana","mijoz","mahsulot","soni","narx","summa","valyuta","izoh"],tolov:["sana","mijoz","guruh","summa","valyuta","usul","izoh"],otkazma:["sana","guruh","guruh2","summa","valyuta","usul","izoh"],
   chiqim:["sana","guruh","kategoriya","summa","valyuta","usul","mijoz","mahsulot","izoh"],prixod:["sana","mijoz","mahsulot","soni","tannarx","izoh"],
-  vozvrat:["sana","mijoz","mahsulot","soni","narx","summa","valyuta","brak","izoh"],brak:["sana","mahsulot","soni","izoh"],sanoq:["sana","mahsulot","soni","tannarx","izoh"],eslatma:["sana","mijoz","izoh"]};
-const ELAB={tolov:{guruh:"Qaysi guruh uchun"},otkazma:{guruh:"Qayerdan (kassa)"},chiqim:{guruh:"Qaysi kassadan",mijoz:"Kimga",mahsulot:"Qaysi tovar uchun (ixtiyoriy)",izoh:"Nima uchun"},prixod:{mijoz:"Kimdan"},vozvrat:{narx:"Qaytarish narxi"}};
+  vozvrat:["sana","mijoz","mahsulot","soni","narx","summa","valyuta","brak","izoh"],tuzatish:["sana","mijoz","guruh","summa","izoh"],brak:["sana","mahsulot","soni","izoh"],sanoq:["sana","mahsulot","soni","tannarx","izoh"],eslatma:["sana","mijoz","izoh"]};
+const ELAB={tolov:{guruh:"Qaysi guruh uchun"},otkazma:{guruh:"Qayerdan (kassa)"},chiqim:{guruh:"Qaysi kassadan",mijoz:"Kimga",mahsulot:"Qaysi tovar uchun (ixtiyoriy)",izoh:"Nima uchun"},prixod:{mijoz:"Kimdan"},vozvrat:{narx:"Qaytarish narxi"},tuzatish:{guruh:"Qaysi guruh qarzi",summa:"Summa (+ qarz oshadi, − kamayadi)"}};
 function openEdit(r){
   if(!canEditRec(r))return;
   const fields=(EBY[r.tur]||["sana","izoh"]).filter(f=>f!=="tannarx"||!isIshchi());
@@ -2234,10 +2245,10 @@ function openEdit(r){
   {const h=el("h3");h.append(ic("pen"),"Tahrirlash: "+(TUR[r.tur]||r.tur).toLowerCase());card.append(h)}
   const g=el("div","filters");const inputs={};let n=0;let sumTouched=false;
   for(const f of fields){const [lab,type,opt]=EF[f];const box=el("div","f");const id="ed-"+(++n);let inp;
-    if(type==="grp"){inp=el("select");gOptions(inp,r.tur!=="tolov",r[f]||(f==="guruh"?grpOf(r):"")||"","— tanlang —")}
+    if(type==="grp"){inp=el("select");gOptions(inp,r.tur!=="tolov"&&r.tur!=="tuzatish",r[f]||(f==="guruh"?grpOf(r):"")||"","— tanlang —")}
     else if(type==="select"){inp=el("select");for(const [v,t] of opt){const o=el("option",null,t);o.value=v;inp.append(o)}inp.value=r[f]??(f==="valyuta"?"USD":f==="kategoriya"?"Boshqa":"")}
     else if(type==="check"){inp=el("input");inp.type="checkbox";inp.checked=!!r[f]}
-    else{inp=el("input");inp.type=type==="number"?"number":type;if(type==="number"){inp.min="0";inp.step="any"}if(opt)inp.setAttribute("list",opt);inp.value=r[f]??""}
+    else{inp=el("input");inp.type=type==="number"?"number":type;if(type==="number"){if(!(r.tur==="tuzatish"&&f==="summa"))inp.min="0";inp.step="any"}if(opt)inp.setAttribute("list",opt);inp.value=r[f]??""}
     inp.id=id;const l=el("label",null,(ELAB[r.tur]&&ELAB[r.tur][f])||lab);l.htmlFor=id;box.append(l,inp);g.append(box);inputs[f]=inp;
     if(f==="summa")inp.addEventListener("input",()=>{sumTouched=true});}
   card.append(g);
@@ -2257,7 +2268,7 @@ function openEdit(r){
       else if(f==="usul"||type==="grp")patch[f]=i.value||null;
       else patch[f]=i.value.trim();}
     if(!patch.sana){msg.className="formline err";msg.textContent="Sanani kiriting.";inputs.sana.focus();return}
-    if((r.tur==="savdo"||r.tur==="tolov"||r.tur==="vozvrat")&&"mijoz" in patch&&!patch.mijoz){msg.className="formline err";msg.textContent="Mijoz ismini kiriting.";inputs.mijoz.focus();return}
+    if((r.tur==="savdo"||r.tur==="tolov"||r.tur==="vozvrat"||r.tur==="tuzatish")&&"mijoz" in patch&&!patch.mijoz){msg.className="formline err";msg.textContent="Mijoz ismini kiriting.";inputs.mijoz.focus();return}
     if("mahsulot" in patch&&!patch.mahsulot&&r.tur!=="chiqim"){msg.className="formline err";msg.textContent="Mahsulot nomini kiriting.";inputs.mahsulot.focus();return}
     patch.tahrirlandi=new Date().toISOString();patch.tahrirladi=me?me.id:(myId||null);
     save.disabled=true;msg.className="formline muted";msg.textContent="Saqlanmoqda…";
