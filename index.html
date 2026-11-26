@@ -445,6 +445,23 @@ tbody tr:hover td{background:#faf6ec}
 .seg{background:var(--bg);border-color:transparent}
 .chart .barm{fill:var(--turq)}.chart .barm.on{fill:var(--gold)}
 
+/* ombor: Jami / Ofisda / Choshtepa */
+.p-kochirish{background:var(--lapis-soft);color:var(--lapis)}
+.seg.oview{display:flex;width:max-content;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;margin:2px 0 4px}
+.seg.oview button{padding:9px 18px;font-size:14px;font-weight:600;min-height:40px;border-radius:10px}
+.seg.oview button[aria-pressed="true"]{background:var(--hero);color:#fff;box-shadow:none}
+#p-ombor td.stock{font-weight:500;font-size:14px;color:var(--muted)}
+#p-ombor td.stock.on{font-weight:800;font-size:15px;color:var(--ink);background:rgba(230,182,81,.10)}
+#p-ombor td.stock.out{color:var(--danger)}#p-ombor td.stock.low.on{color:var(--warn)}
+#p-ombor th[data-col].on{color:var(--ink);box-shadow:inset 0 -2px 0 var(--gold)}
+#p-ombor td.stock.na span{font-size:12px;font-style:italic}
+td.out{display:table-cell}
+#p-ombor .scroll>table{min-width:1180px}
+#p-ombor tbody td:first-child{min-width:170px;font-weight:600}
+#p-ombor .gsel-sel{min-width:120px;max-width:140px}
+@media (max-width:640px){#p-ombor .scroll>table{min-width:0}#p-ombor tbody td:first-child{min-width:0}}
+@media (max-width:640px){.seg.oview{width:100%}.seg.oview button{flex:1;padding:9px 6px;font-size:13px}}
+
 /* kirish sahifasi */
 .lockcard{border-radius:24px;padding:0 0 26px;overflow:hidden;gap:14px}
 .lockcard>*:not(.logo):not(h2){margin-inline:26px!important}
@@ -682,13 +699,17 @@ input[type=date].df[data-v=""]:not(:focus)::before{content:"kk.oo.yyyy";color:va
 
   <!-- OMBOR -->
   <section class="panel" data-d="ombor" id="p-ombor" role="tabpanel" hidden>
-    <div class="phead"><div class="pt"><span class="pico"><svg class="ic" aria-hidden="true"><use href="#i-box"/></svg></span><div><h2>Ombor</h2><p>Har bir tovardan hozir nechta bor, nechtasi brak va asl narxi (tannarx)</p></div></div></div>
+    <div class="phead"><div class="pt"><span class="pico"><svg class="ic" aria-hidden="true"><use href="#i-box"/></svg></span><div><h2>Ombor</h2><p>Har bir tovardan ofisda va Choshtepa skladda nechta bor, nechtasi brak va asl narxi (tannarx)</p></div></div></div>
+    <div class="seg oview" id="o-view" role="group" aria-label="Qaysi ombor">
+      <button data-v="jami" aria-pressed="true">Jami</button><button data-v="ofis">Ofisda</button><button data-v="choshtepa">Choshtepa sklad</button></div>
     <div class="kpis" id="o-kpi"></div>
     <div class="card form">
       <h3>Ombor harakati kiritish</h3>
       <div class="filters">
         <div class="f"><label for="o-type">Harakat</label><select id="o-type">
-          <option value="sanoq">Sanoq: hozir bor soni</option><option value="brak">Brak chiqdi</option><option value="vozvrat">Mijoz qaytardi (vozvrat)</option></select></div>
+          <option value="sanoq_ofis">Ofis sanog'i: ofisda hozir bor soni</option><option value="sanoq_chosh">Choshtepa sanog'i: skladda hozir bor soni</option>
+          <option value="koch_c2o">Choshtepadan ofisga olib kelindi</option><option value="koch_o2c">Ofisdan Choshtepaga olib ketildi</option>
+          <option value="brak">Brak chiqdi</option><option value="vozvrat">Mijoz qaytardi (vozvrat)</option></select></div>
         <div class="f"><label for="o-p">Mahsulot</label><input type="text" id="o-p" list="plist" placeholder="Nomi"></div>
         <div class="f"><label for="o-n">Soni (dona)</label><input type="number" id="o-n" min="0" step="1"></div>
         <div class="f tn" id="o-cost-f"><label for="o-c">Tannarx, $ (ixtiyoriy)</label><input type="number" id="o-c" min="0" step="0.01"></div>
@@ -703,10 +724,10 @@ input[type=date].df[data-v=""]:not(:focus)::before{content:"kk.oo.yyyy";color:va
     <div class="card"><div class="row"><h3 style="flex:1 1 auto">Tovarlar qoldig'i</h3><div style="flex:0 1 260px"><input type="search" id="o-q" placeholder="Mahsulotni qidirish" aria-label="Mahsulotni qidirish"></div></div>
       <p class="muted formline tn">Tannarxni (asl narxni) shu jadvalda kiriting. Foyda shu narx bo'yicha hisoblanadi.</p>
       <div class="scroll"><table>
-      <thead><tr><th>Mahsulot</th><th>Guruh</th><th class="num">Qoldiq</th><th class="num">Brak</th><th class="num">Sotilgan</th><th class="num tn">Tannarx, $</th><th class="num">Sotuv narxi</th><th class="num tn">Ombor qiymati</th><th>Oxirgi sanoq</th><th class="rahbar-only"></th></tr></thead>
+      <thead><tr><th>Mahsulot</th><th>Guruh</th><th class="num" data-col="ofis">Ofisda</th><th class="num" data-col="choshtepa">Choshtepa</th><th class="num" data-col="jami">Jami</th><th class="num">Brak</th><th class="num">Sotilgan</th><th class="num tn">Tannarx, $</th><th class="num">Sotuv narxi</th><th class="num tn">Ombor qiymati</th><th>Oxirgi sanoq</th><th class="rahbar-only"></th></tr></thead>
       <tbody id="o-rows"></tbody></table></div></div>
-    <div class="card"><h3>Sanoq, brak va vozvratlar</h3><div class="scroll"><table>
-      <thead><tr><th>Sana</th><th>Harakat</th><th>Mahsulot</th><th class="num">Soni</th><th>Mijoz / izoh</th><th></th></tr></thead>
+    <div class="card"><h3>Sanoq, ko'chirish, brak va vozvratlar</h3><div class="scroll"><table>
+      <thead><tr><th>Sana</th><th>Harakat</th><th>Ombor</th><th>Mahsulot</th><th class="num">Soni</th><th>Mijoz / izoh</th><th></th></tr></thead>
       <tbody id="o-moves"></tbody></table></div></div>
   </section>
 
@@ -720,6 +741,7 @@ input[type=date].df[data-v=""]:not(:focus)::before{content:"kk.oo.yyyy";color:va
         <div class="f"><label for="x-g">Guruh</label><select id="x-g"></select></div>
         <div class="f"><label for="x-n">Soni (dona)</label><input type="number" id="x-n" min="1" step="1"></div>
         <div class="f tn"><label for="x-c">Tannarx (1 dona), $</label><input type="number" id="x-c" min="0" step="0.01"></div>
+        <div class="f"><label for="x-joy">Qayerga keldi</label><select id="x-joy"><option value="ofis">Ofisga</option><option value="choshtepa">Choshtepa skladga</option></select></div>
         <div class="f"><label for="x-from">Kimdan</label><input type="text" id="x-from" placeholder="Yetkazib beruvchi"></div>
         <div class="f"><label for="x-date">Sana</label><input type="date" id="x-date"></div>
         <div class="f"><button class="go" id="x-save">Prixod qilish</button></div>
@@ -916,8 +938,13 @@ document.body.classList.add("pending");
 let xodimlar=[],me=null,xodimLoaded=false;
 let db=null,sample=null,records=[],products={},ctl=null,pending=null,pendingDel=null,draft=null,confirmId=null,selClient=null,tab="savdo";
 let user=null,downloads=null,myId=null,names={},settings={kurs:null,low:5},clients={},tgPending=null,tgCtl=null,selPeriod="hafta",nameReq="";
-const TUR={savdo:"Savdo",tolov:"Kirim",chiqim:"Rasxod",eslatma:"Eslatma",prixod:"Prixod",sanoq:"Sanoq",vozvrat:"Vozvrat",brak:"Brak",otkazma:"O'tkazma"};
-const TAB_OF={savdo:"savdo",tolov:"kassa",chiqim:"rasxod",eslatma:"eslatma",prixod:"prixod",sanoq:"ombor",vozvrat:"ombor",brak:"ombor",otkazma:"kassa"};
+const TUR={savdo:"Savdo",tolov:"Kirim",chiqim:"Rasxod",eslatma:"Eslatma",prixod:"Prixod",sanoq:"Sanoq",vozvrat:"Vozvrat",brak:"Brak",otkazma:"O'tkazma",kochirish:"Ko'chirish"};
+const TAB_OF={savdo:"savdo",tolov:"kassa",chiqim:"rasxod",eslatma:"eslatma",prixod:"prixod",sanoq:"ombor",vozvrat:"ombor",brak:"ombor",otkazma:"kassa",kochirish:"ombor"};
+/* omborlar: ofis (savdo shu yerdan) va Choshtepa sklad */
+const JOY={ofis:"Ofis",choshtepa:"Choshtepa"};
+function joyOf(r){return r&&r.joy==="choshtepa"?"choshtepa":"ofis"}
+function joyText(r){if(r.tur==="kochirish")return r.joy==="choshtepa"?"Choshtepa → Ofis":"Ofis → Choshtepa";if(r.tur==="sanoq")return r.joy==="choshtepa"?"Choshtepa":r.joy==="ofis"?"Ofis":"Jami";return JOY[joyOf(r)]}
+let oView="jami";
 const TABNAME={savdo:"Savdo",mijoz:"Mijozlar",ombor:"Ombor",prixod:"Prixod",kassa:"Kassa",rasxod:"Rasxodlar",foyda:"Foyda",eslatma:"Eslatmalar",hisobot:"Hisobot",sozlama:"Sozlamalar"};
 /* ---- guruhlar (tovar yo'nalishlari) va kassalar */
 const GR=[{id:"weslamic",nom:"Weslamic",c:"var(--g1)"},{id:"iqibla",nom:"iQIBLA",c:"var(--g2)"},{id:"joynamoz",nom:"Joynamoz",c:"var(--g3)"},{id:"tasbeh",nom:"Mayda tasbehlar",c:"var(--g4)"}];
@@ -957,7 +984,7 @@ function ic(n){const s=document.createElementNS(SVGNS,"svg");s.setAttribute("cla
 function ibtn(n,text,cls){const b=el("button",cls||null);b.append(ic(n),text);return b}
 const USUL={naqd:"Naqd",karta:"Karta"};
 const KATEG=["Tovar xaridi","Yo'l kira","Ijara","Maosh","Transport","Kommunal","Soliq","Qadoqlash","Boshqa"];
-const TYPES=["savdo","tolov","chiqim","eslatma","prixod","sanoq","vozvrat","brak","otkazma"];
+const TYPES=["savdo","tolov","chiqim","eslatma","prixod","sanoq","vozvrat","brak","otkazma","kochirish"];
 const DEL_WORD=/o['‘’`ʻ]?ch?i?r|[ўу]ч(и)?р|оч(и)?р|удал|delete|remove|tozala|тозала|yo['‘’`ʻ]?q qil|olib tashla|сотр|стер/i;
 function lowN(){const v=Number(settings.low);return settings.low==null||settings.low===""||isNaN(v)?5:v}
 function kurs(){const v=Number(settings.kurs);return v>0?v:null}
@@ -1001,20 +1028,25 @@ function cost(name){const p=products[name];return p&&p.tannarx!=null&&p.tannarx!
 function allProducts(){const s=new Set(Object.keys(products));for(const r of records)if(r.mahsulot&&r.tur!=="eslatma"&&r.tur!=="chiqim")s.add(r.mahsulot.trim());let l=[...s].filter(Boolean);if(selGroup)l=l.filter(n=>prodGroup(n)===selGroup||(!prodGroup(n)&&records.some(r=>r.mahsulot===n)));return l.sort((a,b)=>a.localeCompare(b))}
 function lastPrice(name,client){const l=by("savdo").filter(r=>r.mahsulot===name&&(!client||r.mijoz===client)&&r.narx!=null).sort((a,b)=>key(b).localeCompare(key(a)));return l.length?Number(l[0].narx):null}
 
-/* stock algorithm:
-   qoldiq = oxirgi sanoq soni + undan keyingi (prixod + vozvrat[brak emas]) − (savdo + brak)
-   sanoq bo'lmasa: barcha prixod + vozvrat − savdo − brak
+/* stock algorithm (ikki ombor: ofis va Choshtepa sklad):
+   yozuvlar vaqt bo'yicha ketma-ket o'qiladi; q = jami, c = Choshtepa, ofis = q − c.
+   sanoq (joy yo'q) = jami sanog'i; joy:"ofis" = ofis sanog'i (jami = n + Choshtepa); joy:"choshtepa" = Choshtepa sanog'i.
+   prixod/savdo/brak joy:"choshtepa" bo'lsa Choshtepaga tegadi, aks holda ofisga. vozvrat ofisga qaytadi.
+   kochirish: joy:"choshtepa" = Choshtepadan ofisga, joy:"ofis" = ofisdan Choshtepaga (jami o'zgarmaydi).
    brak soni = barcha brak + brak bo'lib qaytgan vozvratlar */
 function stock(name){
-  const mv=records.filter(r=>r.mahsulot===name&&["sanoq","prixod","savdo","vozvrat","brak"].includes(r.tur));
-  const sq=mv.filter(r=>r.tur==="sanoq").sort((a,b)=>key(b).localeCompare(key(a)))[0];
-  let q=sq?Number(sq.soni)||0:0,brak=0,sold=0;
-  for(const r of mv){const n=Number(r.soni)||0;
+  const mv=records.filter(r=>r.mahsulot===name&&["sanoq","prixod","savdo","vozvrat","brak","kochirish"].includes(r.tur)).sort((a,b)=>key(a).localeCompare(key(b)));
+  let q=0,c=0,brak=0,sold=0,sq=null,sqO=null,sqC=null;
+  for(const r of mv){const n=Number(r.soni)||0;const ch=r.joy==="choshtepa";
     if(r.tur==="brak"||(r.tur==="vozvrat"&&r.brak))brak+=n;
     if(r.tur==="savdo")sold+=n;
-    if(r.tur==="sanoq")continue;if(sq&&key(r)<=key(sq))continue;
-    if(r.tur==="prixod")q+=n;else if(r.tur==="savdo")q-=n;else if(r.tur==="vozvrat"){if(!r.brak)q+=n}else if(r.tur==="brak")q-=n}
-  return{qoldiq:q,brak,sold,sanoq:sq||null}
+    if(r.tur==="sanoq"){sq=r;if(r.joy==="choshtepa"){q=q-c+n;c=n;sqC=r}else if(r.joy==="ofis"){q=n+c;sqO=r}else q=n}
+    else if(r.tur==="prixod"){q+=n;if(ch)c+=n}
+    else if(r.tur==="savdo"){q-=n;if(ch)c-=n}
+    else if(r.tur==="vozvrat"){if(!r.brak)q+=n}
+    else if(r.tur==="brak"){q-=n;if(ch)c-=n}
+    else if(r.tur==="kochirish"){c+=ch?-n:n}}
+  return{qoldiq:q,jami:q,chosh:c,ofis:q-c,brak,sold,sanoq:sq,sanoqO:sqO,sanoqC:sqC,ofisSanalmagan:!!(sqO&&sqO.sanalmagan)}
 }
 
 /* profit for a filtered period */
@@ -1170,21 +1202,32 @@ async function delProducts(names,withRecs){
   return n}
 function renderOmbor(){
   const names=allProducts();const q=$("o-q").value.trim().toLowerCase();
-  const st=names.map(n=>({n,...stock(n),c:cost(n),p:lastPrice(n)}));
-  const val=st.reduce((a,x)=>a+(x.c!=null&&x.qoldiq>0?x.qoldiq*x.c:0),0);
-  kpis("o-kpi",[["Mahsulotlar",String(names.length)],["Omborda jami",st.reduce((a,x)=>a+Math.max(0,x.qoldiq),0)+" dona"],["Ombor qiymati",money(val,"USD"),"tannarx bo'yicha"],
-    ["Brak",st.reduce((a,x)=>a+x.brak,0)+" dona",null,st.some(x=>x.brak)?"bad":""],["Minusda",String(st.filter(x=>x.qoldiq<0).length),"prixod yoki sanoqni tekshiring",st.some(x=>x.qoldiq<0)?"bad":""],["Kam qolgan",String(st.filter(x=>x.qoldiq>=0&&x.qoldiq<=lowN()).length),lowN()+" dona va undan kam",st.some(x=>x.qoldiq>=0&&x.qoldiq<=lowN())?"warn":""],["Tannarxsiz",String(st.filter(x=>x.c==null).length),"Jadvalda kiriting",st.some(x=>x.c==null)?"warn":""]].filter(k=>!isIshchi()||(k[0]!=="Ombor qiymati"&&k[0]!=="Tannarxsiz")));
-  const tb=$("o-rows");tb.replaceChildren();const list=st.filter(x=>!q||x.n.toLowerCase().includes(q)).sort((a,b)=>a.qoldiq-b.qoldiq||a.n.localeCompare(b.n));
-  if(!list.length)emptyRow(tb,10,names.length?"Mos mahsulot topilmadi.":"Hali tovar yo'q. Prixod yoki sanoq kiriting.");
+  const V=oView;const vk=V==="ofis"?"ofis":V==="choshtepa"?"chosh":"jami";const VN={jami:"Jami",ofis:"Ofisda",choshtepa:"Choshtepa skladda"}[V];
+  for(const b of document.querySelectorAll("#o-view button"))b.setAttribute("aria-pressed",String(b.dataset.v===V));
+  for(const h of document.querySelectorAll("#p-ombor th[data-col]"))h.classList.toggle("on",h.dataset.col===V);
+  const st0=names.map(n=>({n,...stock(n),c:cost(n),p:lastPrice(n)}));
+  const st=V==="jami"?st0:st0.filter(x=>x[vk]!==0||(V==="ofis"&&x.ofisSanalmagan));
+  const v=x=>x[vk];
+  const val=st.reduce((a,x)=>a+(x.c!=null&&v(x)>0?v(x)*x.c:0),0);
+  const low=st.filter(x=>v(x)>=0&&v(x)<=lowN()&&!(V==="ofis"&&x.ofisSanalmagan));
+  kpis("o-kpi",[["Mahsulotlar",String(st.length),V==="jami"?null:VN],[VN,st.reduce((a,x)=>a+Math.max(0,v(x)),0)+" dona",V==="jami"?"ofis + Choshtepa":null],["Ombor qiymati",money(val,"USD"),"tannarx bo'yicha"],
+    ...(V==="jami"?[["Ofisda",st0.reduce((a,x)=>a+Math.max(0,x.ofis),0)+" dona"],["Choshtepa skladda",st0.reduce((a,x)=>a+Math.max(0,x.chosh),0)+" dona"]]:[]),
+    ...(V==="ofis"&&st.some(x=>x.ofisSanalmagan)?[["Ofisda sanalmagan",String(st.filter(x=>x.ofisSanalmagan).length),"sanab, yordamchiga yozing","warn"]]:[]),
+    ["Brak",st.reduce((a,x)=>a+x.brak,0)+" dona",null,st.some(x=>x.brak)?"bad":""],["Minusda",String(st.filter(x=>v(x)<0).length),"prixod yoki sanoqni tekshiring",st.some(x=>v(x)<0)?"bad":""],["Kam qolgan",String(low.length),lowN()+" dona va undan kam",low.length?"warn":""],["Tannarxsiz",String(st.filter(x=>x.c==null).length),"Jadvalda kiriting",st.some(x=>x.c==null)?"warn":""]].filter(k=>!isIshchi()||(k[0]!=="Ombor qiymati"&&k[0]!=="Tannarxsiz")));
+  const tb=$("o-rows");tb.replaceChildren();const list=st.filter(x=>!q||x.n.toLowerCase().includes(q)).sort((a,b)=>v(a)-v(b)||a.n.localeCompare(b.n));
+  if(!list.length)emptyRow(tb,12,names.length?(q?"Mos mahsulot topilmadi.":VN+" tovar yo'q."):"Hali tovar yo'q. Prixod yoki sanoq kiriting.");
+  const qc=(n,col,extra)=>{const on=col===V;return el("td","num stock"+(on?" on":"")+(n<0?" out":on&&n<=lowN()?" low":"")+(extra?" "+extra:""),String(n))};
   for(const x of list){const tr=el("tr");const gc=el("td");const pg=prodGroup(x.n);
     if(!isIshchi()){const sel=el("select","gsel-sel");sel.setAttribute("aria-label",x.n+" guruhi");gOptions(sel,false,pg||"","— tanlang —");if(!pg)sel.style.borderColor="var(--warn)";sel.onchange=()=>{if(sel.value)setGroup(x.n,sel.value,true)};gc.append(sel)}else gc.append(gtag(pg));
-    tr.append(el("td",null,x.n),gc,el("td","num stock"+(x.qoldiq<0?" out":x.qoldiq<=lowN()?" low":""),String(x.qoldiq)),el("td","num"+(x.brak?" neg":""),x.brak?String(x.brak):"0"),el("td","num",String(x.sold)));
+    const oc=x.ofisSanalmagan?(()=>{const td=el("td","num stock na"+(V==="ofis"?" on":""));td.append(el("span","muted","sanalmagan"));td.title="Ofisda hali sanalmagan";return td})():qc(x.ofis,"ofis");
+    tr.append(el("td",null,x.n),gc,oc,qc(x.chosh,"choshtepa"),qc(x.jami,"jami"),el("td","num"+(x.brak?" neg":""),x.brak?String(x.brak):"0"),el("td","num",String(x.sold)));
     const ct=el("td","num tn");const inp=el("input","cost"+(x.c==null?" empty":""));inp.type="number";inp.min="0";inp.step="0.01";inp.value=x.c==null?"":String(x.c);inp.placeholder="kiriting";inp.setAttribute("aria-label",x.n+" tannarxi");
     inp.disabled=isIshchi();inp.onchange=()=>setCost(x.n,inp.value);ct.append(inp);tr.append(ct);
-    tr.append(el("td","num",x.p!=null?money(x.p,"USD"):""),el("td","num tn",x.c!=null&&x.qoldiq>0?money(x.qoldiq*x.c,"USD"):""),el("td","date",x.sanoq?fmtDate(x.sanoq.sana)+" ("+x.sanoq.soni+")":"—"),prodDelCell(x.n));tb.append(tr)}
-  const mv=records.filter(r=>["sanoq","brak","vozvrat"].includes(r.tur)&&(!q||(r.mahsulot||"").toLowerCase().includes(q))).sort((a,b)=>key(b).localeCompare(key(a)));
-  const mb=$("o-moves");mb.replaceChildren();if(!mv.length)emptyRow(mb,6,"Hali sanoq, brak yoki vozvrat yo'q.");
-  for(const r of mv){const tr=el("tr");tr.append(el("td","date",fmtDate(r.sana)),typeCell(r),el("td",null,r.mahsulot||""),el("td","num",String(r.soni??"")),el("td","muted",[r.mijoz,r.izoh].filter(Boolean).join(" · ")),delCell(r));mb.append(tr)}
+    const ls=V==="ofis"?x.sanoqO:V==="choshtepa"?x.sanoqC:x.sanoq;
+    tr.append(el("td","num",x.p!=null?money(x.p,"USD"):""),el("td","num tn",x.c!=null&&v(x)>0?money(v(x)*x.c,"USD"):""),el("td","date",ls?fmtDate(ls.sana)+" ("+(ls.sanalmagan?"sanalmagan":ls.soni)+(V==="jami"&&ls.joy?", "+JOY[ls.joy]:"")+")":"—"),prodDelCell(x.n));tb.append(tr)}
+  const mv=records.filter(r=>["sanoq","brak","vozvrat","kochirish"].includes(r.tur)&&(!q||(r.mahsulot||"").toLowerCase().includes(q))&&(V==="jami"||r.tur==="kochirish"||(r.tur==="sanoq"?(r.joy||"jami")===V:joyOf(r)===V))).sort((a,b)=>key(b).localeCompare(key(a)));
+  const mb=$("o-moves");mb.replaceChildren();if(!mv.length)emptyRow(mb,7,"Hali sanoq, ko'chirish, brak yoki vozvrat yo'q.");
+  for(const r of mv){const tr=el("tr");tr.append(el("td","date",fmtDate(r.sana)),typeCell(r),el("td",null,joyText(r)),el("td",null,r.mahsulot||""),el("td","num",r.sanalmagan?"sanalmagan":String(r.soni??"")),el("td","muted",[r.mijoz,r.izoh].filter(Boolean).join(" · ")),delCell(r));mb.append(tr)}
 }
 
 function renderPrixod(){
@@ -1306,18 +1349,23 @@ async function addRecords(items){let n=0;for(const y of items){const row={...y,y
     if((y.tur==="prixod"||y.tur==="sanoq")&&y.tannarx!=null&&y.mahsulot)await setCost(y.mahsulot,y.tannarx)}return n}
 
 /* manual forms */
-function oTypeChange(){const t=$("o-type").value;$("o-cost-f").hidden=t!=="sanoq";$("o-m-f").hidden=t!=="vozvrat";$("o-pr-f").hidden=t!=="vozvrat";$("o-b-f").hidden=t!=="vozvrat"}
+function oTypeChange(){const t=$("o-type").value;$("o-cost-f").hidden=!t.startsWith("sanoq");$("o-m-f").hidden=t!=="vozvrat";$("o-pr-f").hidden=t!=="vozvrat";$("o-b-f").hidden=t!=="vozvrat"}
 $("o-type").onchange=oTypeChange;
+for(const b of document.querySelectorAll("#o-view button"))b.onclick=()=>{oView=b.dataset.v;CAP["o-rows"]=0;render()};
 function formMsg(id,text,ok){const p=$(id);p.className="formline "+(ok?"ok":"err");p.textContent=text}
 $("o-save").onclick=async()=>{
-  const t=$("o-type").value,p=$("o-p").value.trim(),n=Number($("o-n").value),m=$("o-m").value.trim(),note=$("o-note").value.trim();
+  const ot=$("o-type").value,p=$("o-p").value.trim(),n=Number($("o-n").value),m=$("o-m").value.trim(),note=$("o-note").value.trim();
+  const t=ot.startsWith("sanoq")?"sanoq":ot.startsWith("koch")?"kochirish":ot;
+  const joy=ot==="sanoq_ofis"||ot==="koch_o2c"?"ofis":ot==="sanoq_chosh"||ot==="koch_c2o"?"choshtepa":null;
   const miss=[];if(!p)miss.push("mahsulot nomini");if(!$("o-n").value||isNaN(n)||n<0||(t!=="sanoq"&&n<=0))miss.push("sonini");if(t==="vozvrat"&&!m)miss.push("kim qaytarganini");
   let c=$("o-c").value===""?null:Number($("o-c").value);let pr=$("o-pr").value===""?null:Number($("o-pr").value);
   if(t==="sanoq"&&c==null&&p&&cost(p)==null&&!isIshchi())miss.push("tannarxini (asl narxini)");
   if(t==="vozvrat"&&pr==null&&p){pr=lastPrice(p,m);if(pr==null)miss.push("qaytarish narxini (bu mijozga bu tovar sotilmagan)")}
   if(miss.length){formMsg("o-msg",miss.join(", ").replace(/^./,s=>s.toUpperCase())+" kiritmadingiz.");return}
   const y={tur:t,sana:today(),mijoz:t==="vozvrat"?m:"",mahsulot:p,soni:n,narx:t==="vozvrat"?pr:null,summa:t==="vozvrat"?pr*n:null,valyuta:"USD",usul:null,kategoriya:null,tannarx:t==="sanoq"?c:null,brak:t==="vozvrat"?$("o-b").checked:false,izoh:note};
-  try{$("o-save").disabled=true;await addRecords([y]);formMsg("o-msg",TUR[t]+" saqlandi: "+p+", "+n+" dona.",true);for(const id of ["o-n","o-c","o-note","o-pr"])$(id).value="";$("o-b").checked=false}
+  if(joy)y.joy=joy;
+  if(t==="kochirish"){const s=stock(p);const from=joy==="choshtepa"?s.chosh:s.ofis;if(from<n&&!confirm((joy==="choshtepa"?"Choshtepada":"Ofisda")+" "+p+" dan "+from+" ta ko'rinyapti. Baribir "+n+" ta ko'chirilsinmi?"))return}
+  try{$("o-save").disabled=true;await addRecords([y]);formMsg("o-msg",(t==="kochirish"?joyText(y):t==="sanoq"?JOY[joy]+" sanog'i":TUR[t])+" saqlandi: "+p+", "+n+" dona.",true);for(const id of ["o-n","o-c","o-note","o-pr"])$(id).value="";$("o-b").checked=false}
   catch(e){formMsg("o-msg","Saqlab bo'lmadi. Qayta urinib ko'ring.")}finally{$("o-save").disabled=false}
 };
 $("x-save").onclick=async()=>{
@@ -1325,7 +1373,8 @@ $("x-save").onclick=async()=>{
   const miss=[];if(!p)miss.push("mahsulot nomini");if(!n||n<=0)miss.push("sonini");if((c==null||isNaN(c))&&!isIshchi())miss.push("tannarxini (1 dona asl narxi)");if(p&&!prodGroup(p)&&!$("x-g").value)miss.push("tovar guruhini");
   if(miss.length){formMsg("x-msg",miss.join(", ").replace(/^./,s=>s.toUpperCase())+" kiritmadingiz.");return}
   const y={guruh:$("x-g").value||null,tur:"prixod",sana:$("x-date").value||today(),mijoz:$("x-from").value.trim(),mahsulot:p,soni:n,narx:null,summa:null,valyuta:"USD",usul:null,kategoriya:null,tannarx:c,brak:false,izoh:""};
-  try{$("x-save").disabled=true;await addRecords([y]);formMsg("x-msg","Prixod qilindi: "+p+", "+n+" dona"+(c!=null&&!isIshchi()?", "+money(c,"USD")+" dan":"")+". Omborga qo'shildi.",true);for(const id of ["x-n","x-c"])$(id).value=""}
+  if($("x-joy").value==="choshtepa")y.joy="choshtepa";
+  try{$("x-save").disabled=true;await addRecords([y]);formMsg("x-msg","Prixod qilindi: "+p+", "+n+" dona"+(c!=null&&!isIshchi()?", "+money(c,"USD")+" dan":"")+". "+(y.joy?"Choshtepa skladga":"Ofis omboriga")+" qo'shildi.",true);for(const id of ["x-n","x-c"])$(id).value=""}
   catch(e){formMsg("x-msg","Saqlab bo'lmadi. Qayta urinib ko'ring.")}finally{$("x-save").disabled=false}
 };
 
@@ -1413,7 +1462,7 @@ function showOut(){const o=$("out");o.hidden=false;o.replaceChildren();return o}
 function showErr(t){const o=showOut();o.append(el("p","err",t))}
 function errText(c){return({not_granted:"Claude'dan foydalanishga ruxsat berilmadi. Sahifani qayta ochib, ruxsat bering.",rate_limited:"Juda ko'p so'rov yuborildi. Bir oz kutib, qayta yuboring.",session_expired:"Qayta tizimga kiring.",invalid_json:"Javobni tushunib bo'lmadi. Boshqacharoq yozib, qayta yuboring.",prompt_too_large:"Daftar juda katta bo'lib ketdi. Eski yozuvlarning bir qismini o'chiring.",refused:"Bu so'rovga javob berilmadi. Boshqacha yozib ko'ring."})[c]||"Xatolik yuz berdi. Qayta yuboring."}
 function csv(){return allRecs.slice(0,800).map(r=>[r.id,r.sana,r.tur,r.mijoz,r.mahsulot,r.soni,r.narx,r.summa,r.valyuta,r.usul,r.kategoriya,isIshchi()?"":r.tannarx,r.brak?"ha":"",r.izoh,grpOf(r)||"",r.guruh2||""].map(v=>String(v??"").replace(/[;\n]/g," ")).join(";")).join("\n")}
-function stockText(){return withAll(()=>{const sg=selGroup;selGroup="";try{return allProducts().map(n=>{const s=stock(n);return n+" [guruh: "+(prodGroup(n)||"belgilanmagan")+"]: qoldiq "+s.qoldiq+", brak "+s.brak+(isIshchi()?"":", tannarx "+(cost(n)??"yo'q"))}).join("\n")}finally{selGroup=sg}})}
+function stockText(){return withAll(()=>{const sg=selGroup;selGroup="";try{return allProducts().map(n=>{const s=stock(n);return n+" [guruh: "+(prodGroup(n)||"belgilanmagan")+"]: jami "+s.jami+" (ofisda "+(s.ofisSanalmagan?"sanalmagan":s.ofis)+", Choshtepa skladda "+s.chosh+"), brak "+s.brak+(isIshchi()?"":", tannarx "+(cost(n)??"yo'q"))}).join("\n")}finally{selGroup=sg}})}
 const GRTEXT=()=>`Guruhlar (tovar yo'nalishlari, har birining o'z kassasi bor): ${GR.map(g=>'"'+g.id+'" = '+g.nom).join(", ")}. Yana "umumiy" kassa bor (umumiy rasxodlar va o'tkazmalar uchun).
 - Har bir tovar bitta guruhga tegishli (ombor ro'yxatida [guruh: ...] deb ko'rsatilgan). Savdo, vozvrat, prixod, sanoq, brak uchun "guruh" = tovarning guruhi. Ro'yxatda guruhi bo'lmagan yangi tovar bo'lsa va foydalanuvchi guruhni aytgan yoki nomidan aniq bo'lsa (masalan "iQIBLA", "iZikr" -> iqibla; "joynamoz" -> joynamoz; "tasbeh" -> tasbeh; "Weslamic" -> weslamic), o'sha guruhni yoz, aks holda null.
 - "tolov" uchun "guruh" = mijoz QAYSI GURUH uchun pul berganini foydalanuvchi aytgan bo'lsa ("Weslamic uchun 1000$", "iqibla qarzidan 100$"). Aytilmagan bo'lsa null (taxmin qilma). Bir to'lov bir necha guruhga bo'linsa, har guruhga alohida "tolov" yozuvi. Savdo bilan birga o'sha zakaz uchun darhol pul berilgani aytilsa, to'lov guruhi = o'sha tovarlarning guruhi; zakazda bir necha guruh tovari bo'lsa, har guruhga o'z summasi bilan alohida "tolov".
@@ -1433,7 +1482,7 @@ ${stockText()||"(tovar yo'q)"}
 
 Faqat bitta JSON qaytar, boshqa matn yozma.
 Yangi ma'lumot bo'lsa:
-{"amal":"saqlash","yozuvlar":[{"tur":"savdo","sana":"YYYY-MM-DD","mijoz":"...","mahsulot":"...","soni":5,"narx":30,"summa":150,"valyuta":"USD","usul":null,"kategoriya":null,"tannarx":null,"brak":false,"izoh":"","guruh":null,"guruh2":null}],"javob":"Nima saqlanishini 1 gapda aytgan qisqa matn"}
+{"amal":"saqlash","yozuvlar":[{"tur":"savdo","sana":"YYYY-MM-DD","mijoz":"...","mahsulot":"...","soni":5,"narx":30,"summa":150,"valyuta":"USD","usul":null,"kategoriya":null,"tannarx":null,"brak":false,"izoh":"","guruh":null,"guruh2":null,"joy":null}],"javob":"Nima saqlanishini 1 gapda aytgan qisqa matn"}
 Savol bo'lsa:
 {"amal":"javob","xulosa":"Asosiy javob 1 gapda, raqam bilan (masalan: Weslamic omborida jami 272 ta, tannarx bo'yicha 5 440$)","javob":"qo'shimcha izoh kerak bo'lsa 1-3 qator, bo'lmasa bo'sh satr","raqamlar":[{"nom":"Jami","qiymat":"272 ta","izoh":"tannarx 5 440$"}],"jadval":{"nom":"jadval sarlavhasi (tovar turi yoki guruh)","ustunlar":["Model","Qoldiq","Tannarx"],"qatorlar":[["Black 19","16 ta","$20"],["Jami","272 ta",""]]},"ogohlantirish":["faqat haqiqiy muammo, masalan: Pink 19 qoldig'i minusda (−2 ta)"]}
 Javob tuzish qoidalari: 2 va undan ko'p narsa raqam bilan sanalsa — matnga emas, "jadval"ga yoz (har narsa alohida qator, oxirgi qator "Jami" bo'lishi mumkin; ustun nomlari qisqa). Tovar nomlarida takrorlanadigan umumiy qism (masalan "Weslamic peace1") qatorlarda emas, "jadval.nom"da bo'lsin. "raqamlar"ga eng muhim 1-4 ta yakuniy raqamni yoz. Keraksiz maydonni bo'sh qoldir ("javob":"", "raqamlar":[], "jadval":null, "ogohlantirish":[]). Bir nechta jadval kerak bo'lsa "jadvallar":[{...},{...}] ishlat. "xulosa" har doim to'ldirilsin.
@@ -1449,7 +1498,10 @@ Turlar (tur):
 - "vozvrat": mijoz tovarni qaytardi (mijoz, mahsulot, soni, narx = qaytarish narxi, summa = soni*narx). brak = true agar qaytgan tovar brak/nosoz bo'lsa. Brak bo'lmasa omborga plyus. Bir xabarda ham butun, ham brak qaytgan bo'lsa ikkita alohida yozuv qil.
 - "brak": omborda tovar brak/nosoz chiqdi (mahsulot, soni, izoh). Ombordan minus, brak soniga plyus.
 - "prixod": bizga tovar keldi (mahsulot, soni, tannarx = 1 dona asl narxi, mijoz = kimdan kelgani). Omborga plyus.
-- "sanoq": omborda hozir aniq nechta borligi aytildi ("omborda 40 ta bor", "sanadik, 25 ta chiqdi") (mahsulot, soni, tannarx aytilgan bo'lsa).
+- "sanoq": omborda hozir aniq nechta borligi aytildi ("omborda 40 ta bor", "sanadik, 25 ta chiqdi") (mahsulot, soni, tannarx aytilgan bo'lsa). joy = "ofis" (ofisdagi sanoq — odatiy) yoki "choshtepa" (Choshtepa skladdagi sanoq). Bitta xabarda ham ofis, ham Choshtepa soni aytilsa — ikkita alohida sanoq yozuvi qil. "Jami N ta" deb faqat umumiy son aytilsa joy = null.
+- "kochirish": tovar bir ombordan boshqasiga olib o'tildi, jami o'zgarmaydi (mahsulot, soni). joy = qayerdan olingani: "choshtepa" = Choshtepadan ofisga olib kelindi ("skladdan olib keldik", "Choshtepadan 200 ta keldi"); "ofis" = ofisdan Choshtepaga olib ketildi.
+
+Omborlar: ikkita — "ofis" (savdo odatda shu yerdan) va "choshtepa" (Choshtepadagi katta sklad). joy maydoni faqat sanoq, kochirish, prixod, savdo, brak uchun. prixod, savdo, brak'da joy = "choshtepa" faqat Choshtepa aniq aytilganda ("tovar to'g'ri skladga tushdi", "Choshtepadan sotildi"), aks holda joy = null (ofis).
 - "tolov": mijoz BIZGA pul berdi — kirim (mijoz, summa, usul).
 - "chiqim": pul BIZDAN chiqdi — rasxod (summa, usul, kategoriya, izoh = nima uchun, mijoz = kimga). Agar rasxod aniq bir tovar uchun bo'lsa (masalan o'sha tovarning yo'l kirasi, qadoqlash, bojxona), mahsulot = o'sha tovar nomi; oddiy rasxodda mahsulot bo'sh.
 - "otkazma": kassalar orasida pul o'tkazish (guruh = qayerdan, guruh2 = qayerga, summa, usul).
@@ -1504,16 +1556,18 @@ function clean(y){
   const soni=num(y.soni),narx=num(y.narx);let summa=num(y.summa);
   if(summa==null&&soni!=null&&narx!=null&&(tur==="savdo"||tur==="vozvrat"))summa=soni*narx;
   let nx=narx;if(nx==null&&summa!=null&&soni&&(tur==="savdo"||tur==="vozvrat"))nx=Math.round(summa/soni*100)/100;
-  const withQty=["savdo","vozvrat","brak","prixod","sanoq"].includes(tur);
+  const withQty=["savdo","vozvrat","brak","prixod","sanoq","kochirish"].includes(tur);
   const r={tur,sana:/^\d{4}-\d\d-\d\d$/.test(y.sana||"")?y.sana:today(),mijoz:String(y.mijoz||"").trim(),
     mahsulot:tur==="tolov"?"":String(y.mahsulot||"").trim(),soni:withQty?soni:null,narx:tur==="savdo"||tur==="vozvrat"?nx:null,
     summa:["savdo","vozvrat","tolov","chiqim"].includes(tur)?summa:null,valyuta:y.valyuta==="UZS"?"UZS":"USD",
     usul:(tur==="tolov"||tur==="chiqim")&&["naqd","karta"].includes(y.usul)?y.usul:null,
     kategoriya:tur==="chiqim"?(KATEG.includes(y.kategoriya)?y.kategoriya:"Boshqa"):null,
     tannarx:tur==="prixod"||tur==="sanoq"?num(y.tannarx):null,brak:tur==="vozvrat"?!!y.brak:false,izoh:String(y.izoh||"").trim(),
-    guruh:(()=>{const g=grpId(y.guruh);return tur==="tolov"||["savdo","vozvrat","prixod","sanoq","brak"].includes(tur)?(GID.has(g)?g:null):(KID.has(g)?g:null)})(),
+    guruh:(()=>{const g=grpId(y.guruh);return tur==="tolov"||["savdo","vozvrat","prixod","sanoq","brak","kochirish"].includes(tur)?(GID.has(g)?g:null):(KID.has(g)?g:null)})(),
     guruh2:tur==="otkazma"&&KID.has(grpId(y.guruh2))?grpId(y.guruh2):null};
   if(tur==="otkazma"){r.summa=summa;r.usul=["naqd","karta"].includes(y.usul)?y.usul:null;r.mahsulot="";r.mijoz=""}
+  {const j=String(y.joy||"").toLowerCase().replace(/[^a-z]/g,"");const jj=j.startsWith("chosh")||j==="sklad"?"choshtepa":j==="ofis"||j==="office"?"ofis":null;
+   if(tur==="kochirish")r.joy=jj||"choshtepa";else if(tur==="sanoq"){if(jj)r.joy=jj}else if(["prixod","savdo","brak"].includes(tur)&&jj==="choshtepa")r.joy="choshtepa"}
   if(!r.guruh2)delete r.guruh2;
   const sv=String(y.sotuvchi||"").trim().slice(0,60);if(sv)r.sotuvchi=sv;
   return r;
@@ -1941,7 +1995,7 @@ ${stockText()||"(yo'q)"}
 ${GRTEXT()}
 
 Faqat bitta JSON qaytar, boshqa matn yozma:
-{"yozuvlar":[{"tur":"savdo","sana":"YYYY-MM-DD","mijoz":"...","mahsulot":"...","soni":5,"narx":30,"summa":150,"valyuta":"USD","usul":null,"kategoriya":null,"tannarx":null,"brak":false,"izoh":"","guruh":null,"guruh2":null,"sotuvchi":"xabarni yozgan odam","manba":"asl xabarning qisqa matni"}]}
+{"yozuvlar":[{"tur":"savdo","sana":"YYYY-MM-DD","mijoz":"...","mahsulot":"...","soni":5,"narx":30,"summa":150,"valyuta":"USD","usul":null,"kategoriya":null,"tannarx":null,"brak":false,"izoh":"","guruh":null,"guruh2":null,"joy":null,"sotuvchi":"xabarni yozgan odam","manba":"asl xabarning qisqa matni"}]}
 
 Turlar: "savdo" (mijoz tovar oldi), "tolov" (mijoz bizga pul berdi), "chiqim" (bizdan pul chiqdi; kategoriya: ${KATEG.join(", ")}), "prixod" (bizga tovar keldi; tannarx = 1 dona asl narxi), "vozvrat" (mijoz qaytardi; brak = true agar nosoz bo'lsa), "brak", "sanoq", "otkazma" (kassalar orasida pul o'tkazish), "eslatma".
 Qoidalar:
