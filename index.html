@@ -1005,7 +1005,9 @@ function diff(a,b){const o={...a};for(const c in b)o[c]=(o[c]||0)-b[c];return o}
 function mm(o){const k=Object.keys(o).filter(c=>Math.abs(o[c])>0.0049);if(!k.length)return money(0,"USD");const s=k.map(c=>money(o[c],c)).join(" + ");
   return k.includes("UZS")&&kurs()?s+" (≈ "+money(usd(o),"USD")+")":s}
 function pos(o){return Object.values(o).some(v=>v>0.0049)}
-function uniq(list,f){return[...new Set(list.map(r=>(r[f]||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b))}
+/* tabiiy tartib: model, rang, o'lcham (black 8, black 10 ... green 18, green 20) */
+const NAT=new Intl.Collator("uz",{numeric:true,sensitivity:"base"});const natCmp=(a,b)=>NAT.compare(a,b);
+function uniq(list,f){return[...new Set(list.map(r=>(r[f]||"").trim()).filter(Boolean))].sort(natCmp)}
 function fillSelect(id,vals){const s=$(id);const cur=s.value;const keep=[...s.options].filter(o=>o.dataset.fixed||o.value==="");s.replaceChildren(...keep);
   for(const v of vals){const o=el("option",null,v);o.value=v;s.append(o)}if(cur&&!vals.includes(cur)&&!keep.some(o=>o.value===cur))s.value="";else s.value=cur}
 function inRange(r,p){const a=$(p+"-d1").value,b=$(p+"-d2").value;return(!a||(r.sana||"")>=a)&&(!b||(r.sana||"")<=b)}
@@ -1025,7 +1027,7 @@ const by=t=>records.filter(r=>r.tur===t);
 const key=r=>(r.sana||"")+"|"+(r.yaratildi||"");
 function slug(name){return "p-"+[...String(name).trim().toLowerCase()].map(ch=>/[a-z0-9]/.test(ch)?ch:"~"+ch.codePointAt(0).toString(16)).join("").slice(0,190)}
 function cost(name){const p=products[name];return p&&p.tannarx!=null&&p.tannarx!==""?Number(p.tannarx):null}
-function allProducts(){const s=new Set(Object.keys(products));for(const r of records)if(r.mahsulot&&r.tur!=="eslatma"&&r.tur!=="chiqim")s.add(r.mahsulot.trim());let l=[...s].filter(Boolean);if(selGroup)l=l.filter(n=>prodGroup(n)===selGroup||(!prodGroup(n)&&records.some(r=>r.mahsulot===n)));return l.sort((a,b)=>a.localeCompare(b))}
+function allProducts(){const s=new Set(Object.keys(products));for(const r of records)if(r.mahsulot&&r.tur!=="eslatma"&&r.tur!=="chiqim")s.add(r.mahsulot.trim());let l=[...s].filter(Boolean);if(selGroup)l=l.filter(n=>prodGroup(n)===selGroup||(!prodGroup(n)&&records.some(r=>r.mahsulot===n)));return l.sort(natCmp)}
 function lastPrice(name,client){const l=by("savdo").filter(r=>r.mahsulot===name&&(!client||r.mijoz===client)&&r.narx!=null).sort((a,b)=>key(b).localeCompare(key(a)));return l.length?Number(l[0].narx):null}
 
 /* stock algorithm (ikki ombor: ofis va Choshtepa sklad):
@@ -1214,7 +1216,7 @@ function renderOmbor(){
     ...(V==="jami"?[["Ofisda",st0.reduce((a,x)=>a+Math.max(0,x.ofis),0)+" dona"],["Choshtepa skladda",st0.reduce((a,x)=>a+Math.max(0,x.chosh),0)+" dona"]]:[]),
     ...(V==="ofis"&&st.some(x=>x.ofisSanalmagan)?[["Ofisda sanalmagan",String(st.filter(x=>x.ofisSanalmagan).length),"sanab, yordamchiga yozing","warn"]]:[]),
     ["Brak",st.reduce((a,x)=>a+x.brak,0)+" dona",null,st.some(x=>x.brak)?"bad":""],["Minusda",String(st.filter(x=>v(x)<0).length),"prixod yoki sanoqni tekshiring",st.some(x=>v(x)<0)?"bad":""],["Kam qolgan",String(low.length),lowN()+" dona va undan kam",low.length?"warn":""],["Tannarxsiz",String(st.filter(x=>x.c==null).length),"Jadvalda kiriting",st.some(x=>x.c==null)?"warn":""]].filter(k=>!isIshchi()||(k[0]!=="Ombor qiymati"&&k[0]!=="Tannarxsiz")));
-  const tb=$("o-rows");tb.replaceChildren();const list=st.filter(x=>!q||x.n.toLowerCase().includes(q)).sort((a,b)=>v(a)-v(b)||a.n.localeCompare(b.n));
+  const tb=$("o-rows");tb.replaceChildren();const list=st.filter(x=>!q||x.n.toLowerCase().includes(q)).sort((a,b)=>natCmp(a.n,b.n));
   if(!list.length)emptyRow(tb,12,names.length?(q?"Mos mahsulot topilmadi.":VN+" tovar yo'q."):"Hali tovar yo'q. Prixod yoki sanoq kiriting.");
   const qc=(n,col,extra)=>{const on=col===V;return el("td","num stock"+(on?" on":"")+(n<0?" out":on&&n<=lowN()?" low":"")+(extra?" "+extra:""),String(n))};
   for(const x of list){const tr=el("tr");const gc=el("td");const pg=prodGroup(x.n);
